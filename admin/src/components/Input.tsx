@@ -16,7 +16,6 @@ import PlaygroundEditorTheme from '../lexical/themes/PlaygroundEditorTheme';
 
 import Nodes from '../lexical/nodes';
 
-import { createGlobalStyle } from 'styled-components';
 import { InputProps } from '@strapi/strapi/admin';
 import { SerializedStrapiImageNode } from 'src/lexical/nodes/StrapiImageNode';
 import { SerializedLinkNode } from '@lexical/link';
@@ -31,6 +30,13 @@ interface CustomFieldsComponentProps {
   onChange: (event: { target: { name: string; value: unknown; type: string } }) => void;
   value: SerializedEditorState<SerializedLexicalNode>;
   error: MessageDescriptor;
+}
+interface Relation {
+  apiData: any;
+  label: string;
+  id: number;
+  status: string;
+  href: string;
 }
 
 const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & InputProps>(
@@ -50,7 +56,8 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
         target: { name, type: attribute.type, value: newValue },
       });
 
-      const mediaNodes = ['strapiImage'];
+      // Parse lexical document for images and links
+      const mediaNodes = ['strapi-image'];
       const linkNodes = ['link'];
 
       const mediaDocumentsIds: Set<string> = new Set();
@@ -80,9 +87,7 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
 
       gatherStrapiRelations(newValue.root.children as SerializedElementNode[]);
 
-      const dynamicZoneValue = [];
-      let keyCounter = 0;
-
+      // Reference media
       if (mediaDocumentsIds.size > 0) {
         try {
           const resultFetchClient = await get(`/upload/files`, {
@@ -92,24 +97,38 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
                   $in: [...mediaDocumentsIds.values()],
                 },
               },
+              pagination: {
+                page: 1,
+                pageSize: mediaDocumentsIds.size,
+              },
             },
           });
-
-          dynamicZoneValue.push({
-            __component: 'lexical-links.media',
-            __temp_key__: `l${keyCounter}`,
-            links: resultFetchClient.data.results,
+          onChange({
+            target: {
+              name: `${name}Media`,
+              type: 'media',
+              value: resultFetchClient.data.results,
+            },
           });
-          keyCounter++;
         } catch (err) {
           alert(
             'Failed to locate media used in the rich text. This may be due to a permission issue. Please contact your administrator or developer for assistance.'
           );
           console.error(err);
         }
+      } else {
+        onChange({
+          target: {
+            name: `${name}Media`,
+            type: 'media',
+            value: [],
+          },
+        });
       }
 
+      // Reference collections/links
       try {
+        const links: { [key: string]: { connect: Relation[] } } = {};
         for (const [collectionName, documentIds] of collectionLinks.entries()) {
           const resultIdentify = await get(`/lexical/identify/${collectionName}`);
           const resultFetchClient = await get(
@@ -121,43 +140,40 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
                     $in: [...documentIds.values()],
                   },
                 },
+                pagination: {
+                  page: 1,
+                  pageSize: documentIds.size,
+                },
               },
             }
           );
 
-          dynamicZoneValue.push({
-            __component: `lexical-links.${collectionName}`,
-            __temp_key__: `l${keyCounter}`,
-            links: {
-              connect: resultFetchClient.data.results.map(
-                (result: { id: number; documentId: string; [key: string]: unknown }) => ({
-                  apiData: result,
-                  label: result['name'] || result['title'] || result['label'] || result['headline'],
-                  id: result.id,
-                  status: result.status,
-                  href: `/content-manager/collection-types/${resultIdentify.data.collectionUID}/${result.documentId}`,
-                })
-              ),
-              // @todo we probably have to maintain disconnect array as well to avoid issues on long term. No time right now for that ;)
-            },
-          });
-          keyCounter++;
+          links[collectionName] = {
+            connect: resultFetchClient.data.results.map(
+              (result: { id: number; documentId: string; [key: string]: unknown }) => ({
+                apiData: result,
+                label: result['name'] || result['title'] || result['label'] || result['headline'],
+                id: result.id,
+                status: result.status,
+                href: `/content-manager/collection-types/${resultIdentify.data.collectionUID}/${result.documentId}`,
+              })
+            ),
+            // @todo we probably have to maintain disconnect array as well to avoid issues on long term. No time right now for that ;)
+          };
         }
+        onChange({
+          target: {
+            name: `${name}Links`,
+            type: 'component',
+            value: links,
+          },
+        });
       } catch (err) {
         alert(
           'Failed to locate linked collection entries in the rich text. This may be due to a permission issue. Please contact your administrator or developer for assistance.'
         );
         console.error(err);
       }
-
-      // Set value for dynamic zone field
-      onChange({
-        target: {
-          name: `${name}Links`,
-          type: 'dynamiczone',
-          value: dynamicZoneValue,
-        },
-      });
     };
 
     const handleChangeCb = React.useCallback(

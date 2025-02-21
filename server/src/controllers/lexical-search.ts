@@ -25,26 +25,33 @@ function findTitleField(strapi: Core.Strapi, collectionTypeUID) {
 
 const lexicalSearch = ({ strapi }: { strapi: Core.Strapi }) => ({
   async search(ctx) {
-    const { model, field } = ctx.params;
+    // @todo Reenable filtered search, either by config or by automatic detection of which link fields are available.
+    // this got removed this was problematic with data structures that have sub components, the following code wont work with them:
+    // const { model, field } = ctx.params;
 
-    const contentType = strapi.contentTypes[model];
-    const linksField = contentType.attributes[`${field}Links`];
+    // const contentType = strapi.contentTypes[model];
+    // const linksField = contentType.attributes[`${field}Links`];
 
-    if (!linksField) {
-      console.log('No links field found');
-      ctx.body = [];
-      return;
-    }
+    // console.dir({contentType}, {depth: null})
+    // if (!linksField) {
+    //   console.log('No links field found');
+    //   ctx.body = [];
+    //   return;
+    // }
+
+    // const linkableComponents = linksField.components
+    //   .filter((component: string) => component !== 'lexical-links.media')
+    //   .map((component: string) => {
+    //     const collectionName = component.replace('lexical-links.', '');
+    //     return findCollectionUID(strapi, collectionName);
+    //   });
+
+    // Retrieve all API content types (excluding core types like users-permissions)
+    const contentTypes = Object.entries(strapi.contentTypes)
+      .filter(([uid]) => uid.startsWith('api::')) // Only user-defined content types
+      .map(([uid]) => uid);
 
     const qs = querystring.parse(ctx.url.split('?')[1]);
-
-    // @ts-expect-error
-    const linkableComponents = linksField.components
-      .filter((component: string) => component !== 'lexical-links.media')
-      .map((component: string) => {
-        const collectionName = component.replace('lexical-links.', '');
-        return findCollectionUID(strapi, collectionName);
-      });
 
     const results: {
       documentId: string;
@@ -53,8 +60,8 @@ const lexicalSearch = ({ strapi }: { strapi: Core.Strapi }) => ({
       label: string;
     }[] = [];
 
-    for (const linkableComponent of linkableComponents) {
-      const fieldName = findTitleField(strapi, linkableComponent);
+    for (const contentType of contentTypes) {
+      const fieldName = findTitleField(strapi, contentType);
 
       if (fieldName) {
         const query = {
@@ -65,10 +72,10 @@ const lexicalSearch = ({ strapi }: { strapi: Core.Strapi }) => ({
             },
           },
         };
-        const res = await strapi.documents(linkableComponent).findMany(query);
+        const res = await strapi.documents(contentType as any).findMany(query);
 
         if (res.length) {
-          const { collectionName } = strapi.contentType(linkableComponent);
+          const { collectionName } = strapi.contentType(contentType as any);
           for (const entity of res) {
             results.push({
               documentId: entity.documentId,

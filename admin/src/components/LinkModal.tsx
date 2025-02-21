@@ -20,7 +20,7 @@ import {
   useFetchClient,
 } from '@strapi/strapi/admin';
 
-const highlightText = (text: string, q: string): JSX.Element => {
+const highlightText = (text: string, q: string): React.ReactElement => {
   if (!q.trim().length) return <>{text}</>;
 
   const regex = new RegExp(`(${q})`, 'gi');

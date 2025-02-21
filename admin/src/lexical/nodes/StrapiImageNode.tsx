@@ -48,7 +48,7 @@ export class StrapiImageNode extends DecoratorNode<JSX.Element> {
   __src: string;
 
   static getType(): string {
-    return 'strapiImage';
+    return 'strapi-image';
   }
 
   static clone(node: StrapiImageNode): StrapiImageNode {
