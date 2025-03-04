@@ -4,9 +4,7 @@
 
 ![screenshot-lexical](https://github.com/user-attachments/assets/e861401d-c850-404f-a5c0-9c6bee0a8456)
 
-
 [![https://nodei.co/npm/strapi-plugin-lexical.png?downloads=true&downloadRank=true&stars=true](https://nodei.co/npm/strapi-plugin-lexical.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/strapi-plugin-lexical)
-
 
 > **Alpha Software**  
 > This plugin is in active development. Contributions in the form of bug reports, feature suggestions, and pull requests are highly encouraged!
@@ -39,23 +37,40 @@
 ## Installation
 
 1. Install the plugin:
+
    ```bash
    npm install strapi-plugin-lexical
    ```
 
-2. Include the required CSS and Prism.js in your Strapi admin:
+2. Enable the plugin:
+
+   ```javascript
+   // ./config/plugins.js
+   {
+    lexical: {
+      enabled: true,
+    },
+
+  };
+    ```
+
+3. Include the required CSS and Prism.js in your Strapi admin:
+
    ```javascript
    // ./src/admin/app.js
    import "strapi-plugin-lexical/dist/style.css";
    import "prismjs";
    ```
 
-3. Add Vite support for Prism.js:
+4. Add Vite support for Prism.js:
    - Install the plugin:
+
      ```bash
      npm install --save-dev vite-plugin-prismjs
      ```
+
    - Update your Vite configuration:
+
      ```javascript
      // ./src/admin/vite.config.js
      import { mergeConfig } from "vite";
@@ -70,8 +85,8 @@
          ],
        });
      ```
-    > **Note:** Prism.js is required even if you don't plan to support code blocks. If you find a workaround to avoid this, please share it with us via a pull request or issue. We happily skip this installation step if we can!
 
+    > **Note:** Prism.js is required even if you don't plan to support code blocks. If you find a workaround to avoid this, please share it with us via a pull request or issue. We happily skip this installation step if we can!
 
 ## Usage
 
@@ -88,8 +103,9 @@ This plugin ensures reliable rendering of images and internal links by maintaini
 #### Opt-in Mechanism  
 
 To enable this feature, you have to create **secondary fields**:
-* With the suffix **`Media`** (e.G. `YourFieldNameMedia`): This field must be a multiple media field with editing disabled.
-* With the suffix **`Links`** (e.G. `YourFieldNameLinks`): This must be a component, either use our pregenerated `Links` component or build your own. Important: It should only contain relation fields and the field name must match the linked collection name.
+
+- With the suffix **`Media`** (e.G. `YourFieldNameMedia`): This field must be a multiple media field with editing disabled.
+- With the suffix **`Links`** (e.G. `YourFieldNameLinks`): This must be a component, either use our pregenerated `Links` component or build your own. Important: It should only contain relation fields and the field name must match the linked collection name.
 
 #### Integration in Lexical documents
 
@@ -102,6 +118,7 @@ Media is stored as a custom Lexical nodes, while store relations to strapi conte
 - The structure is rather simple, as you can see:
 
 **strapi-image Lexical Node Data Structure:**
+
 ```json
 { "documentId": "id_of_media_asset" }
 ```
@@ -124,10 +141,11 @@ There are two options:
 
 Benefit: Less code, multiple API calls while rendering
 
-* adjust the rendering functions of each lexical node
-* actually.. can it even be asnyc? double check... this is the `not recommended way` anyways...
+- adjust the rendering functions of each lexical node
+- actually.. can it even be asnyc? double check... this is the `not recommended way` anyways...
 
 **Example: Fetching the Latest API Data for a link**
+
 ```js
 const [collectionName, documentId] = linkNode.url.replace("strapi://", "").split("/");
 const articles = client.collection(collectionName);
@@ -144,12 +162,13 @@ To render media and links, we have to query the data from our media field and fi
 
 Benefit: only one API call, more control
 
-* fetch fields
-* iterate through the lexical document
-* inject the document from the strapi api response into the lexical node for later rendering
-* the data is now available when rendering the lexical node in your renderer
+- fetch fields
+- iterate through the lexical document
+- inject the document from the strapi api response into the lexical node for later rendering
+- the data is now available when rendering the lexical node in your renderer
 
 **Example Renderer with NextJS:**
+
 ```tsx
 // LexicalRenderer.tsx
 import Image from "next/image";
@@ -306,6 +325,7 @@ export const lexicalToPlaintext = (json: { root: Node }) => {
 ## Roadmap
 
 ### v0 - Alpha
+
 - [x] Implement basic functionality.
 - [x] Port features from the Lexical playground as the initial foundation.
 - [x] Integrate Strapi Media Assets and enable linking to Strapi Collection Entries
@@ -315,6 +335,7 @@ export const lexicalToPlaintext = (json: { root: Node }) => {
 - [ ] Look for a potential co-maintainer.
 
 ### v1 - Stable
+
 - Introduce plugin-based architecture:
   - Allow users to extend functionality with their own plugins.
 - Enable configuration of presets via plugin settings.
@@ -325,6 +346,7 @@ export const lexicalToPlaintext = (json: { root: Node }) => {
 ## Contributing
 
 We welcome contributions! Here’s how you can help:
+
 - Report bugs or suggest features via the [issue tracker](https://github.com/hashbite/strapi-plugin-lexical/issues).
 - Submit pull requests to improve functionality or documentation.
 - Share your feedback and ideas to shape the plugin’s future.
