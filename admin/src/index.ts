@@ -1,7 +1,7 @@
-import { PLUGIN_ID } from './pluginId';
-import { Initializer } from './components/Initializer';
-import { PluginIcon } from './components/PluginIcon';
 import { StrapiApp } from '@strapi/strapi/admin';
+import { Initializer } from './components/Initializer';
+import { LexicalIcon } from './components/LexicalIcon';
+import { PLUGIN_ID } from './pluginId';
 
 export default {
   register(app: StrapiApp) {
@@ -24,7 +24,7 @@ export default {
         id: 'lexical.lexical.description',
         defaultMessage: 'Lexical advanced WYSIWYG editor',
       },
-      icon: PluginIcon,
+      icon: LexicalIcon,
       components: {
         Input: async () =>
           // @ts-expect-error its fine and works, the typing of the props seems to be wrong at the moment
