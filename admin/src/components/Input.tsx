@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Field, Flex } from '@strapi/design-system';
 import { useFetchClient } from '@strapi/strapi/admin';
-import { debounce } from 'lodash';
+import debounce from 'lodash.debounce';
 import { MessageDescriptor } from 'react-intl';
 
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -10,15 +10,15 @@ import { SerializedEditorState, SerializedElementNode, SerializedLexicalNode } f
 
 import LexicalEditor from '../lexical/Editor';
 import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
-import { TableContext } from '../lexical/plugins/TablePlugin';
 import { ToolbarContext } from '../lexical/context/ToolbarContext';
+import { TableContext } from '../lexical/plugins/TablePlugin';
 import PlaygroundEditorTheme from '../lexical/themes/PlaygroundEditorTheme';
 
 import Nodes from '../lexical/nodes';
 
+import { SerializedLinkNode } from '@lexical/link';
 import { InputProps } from '@strapi/strapi/admin';
 import { SerializedStrapiImageNode } from 'src/lexical/nodes/StrapiImageNode';
-import { SerializedLinkNode } from '@lexical/link';
 
 interface CustomFieldsComponentProps {
   attribute: {
