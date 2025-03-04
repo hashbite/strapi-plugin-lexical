@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { Field, Flex } from '@strapi/design-system';
 import { useFetchClient } from '@strapi/strapi/admin';
-import debounce from 'lodash.debounce';
 import { MessageDescriptor } from 'react-intl';
 
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -18,6 +17,7 @@ import Nodes from '../lexical/nodes';
 
 import { SerializedLinkNode } from '@lexical/link';
 import { InputProps } from '@strapi/strapi/admin';
+import debounce from 'lodash-es/debounce';
 import { SerializedStrapiImageNode } from 'src/lexical/nodes/StrapiImageNode';
 
 interface CustomFieldsComponentProps {
