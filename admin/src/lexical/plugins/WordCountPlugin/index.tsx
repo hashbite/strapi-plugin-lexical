@@ -72,7 +72,7 @@ const WordCountPlugin: React.FC<WordCountPluginProps> = ({ limit, charset = 'UTF
         const root = $getRoot();
         const text = root.getTextContent();
 
-        const words = text.match(/\b\w+\b/g)?.length || 0;
+        const words = text.trim().split(/\s+/).filter(Boolean).length;
         const chars = text.length;
 
         setWordCount(words);
