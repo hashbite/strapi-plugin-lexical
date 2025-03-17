@@ -82,7 +82,9 @@ const WordCountPlugin: React.FC<WordCountPluginProps> = ({ limit, charset = 'UTF
 
     updateCounts();
 
-    const removeListener = editor.registerUpdateListener(updateCounts);
+    const removeListener = editor.registerUpdateListener(() => {
+      updateCounts();
+    });
 
     return () => removeListener();
   }, [editor]);
