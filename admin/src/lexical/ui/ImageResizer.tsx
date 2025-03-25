@@ -12,6 +12,7 @@ import type { JSX } from 'react';
 import { calculateZoomLevel } from '@lexical/utils';
 import * as React from 'react';
 import { useRef } from 'react';
+import { useIntl } from 'react-intl';
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -45,6 +46,7 @@ export default function ImageResizer({
   showCaption: boolean;
   captionsEnabled: boolean;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const controlWrapperRef = useRef<HTMLDivElement>(null);
   const userSelect = useRef({
     priority: '',
@@ -227,53 +229,88 @@ export default function ImageResizer({
             setShowCaption(!showCaption);
           }}
         >
-          Add Caption
+          {formatMessage({
+            id: 'lexical.ui.imageresizer.caption.button',
+            defaultMessage: 'Add Caption',
+          })}
         </button>
       )}
       <div
         className="image-resizer image-resizer-n"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.north',
+          defaultMessage: 'Resize image from top',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.north);
         }}
       />
       <div
         className="image-resizer image-resizer-ne"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.northeast',
+          defaultMessage: 'Resize image from top right',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.north | Direction.east);
         }}
       />
       <div
         className="image-resizer image-resizer-e"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.east',
+          defaultMessage: 'Resize image from right',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.east);
         }}
       />
       <div
         className="image-resizer image-resizer-se"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.southeast',
+          defaultMessage: 'Resize image from bottom right',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.south | Direction.east);
         }}
       />
       <div
         className="image-resizer image-resizer-s"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.south',
+          defaultMessage: 'Resize image from bottom',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.south);
         }}
       />
       <div
         className="image-resizer image-resizer-sw"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.southwest',
+          defaultMessage: 'Resize image from bottom left',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.south | Direction.west);
         }}
       />
       <div
         className="image-resizer image-resizer-w"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.west',
+          defaultMessage: 'Resize image from left',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.west);
         }}
       />
       <div
         className="image-resizer image-resizer-nw"
+        aria-label={formatMessage({
+          id: 'lexical.ui.imageresizer.control.northwest',
+          defaultMessage: 'Resize image from top left',
+        })}
         onPointerDown={(event) => {
           handlePointerDown(event, Direction.north | Direction.west);
         }}

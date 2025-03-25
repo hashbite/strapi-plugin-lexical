@@ -20,17 +20,16 @@ import {
 import { $convertFromMarkdownString, $convertToMarkdownString } from '@lexical/markdown';
 import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { mergeRegister } from '@lexical/utils';
 import {
   $createTextNode,
   $getRoot,
   $isParagraphNode,
   CLEAR_EDITOR_COMMAND,
   CLEAR_HISTORY_COMMAND,
-  COMMAND_PRIORITY_EDITOR,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 
+import { useIntl } from 'react-intl';
 import useFlashMessage from '../../hooks/useFlashMessage';
 import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';
@@ -89,6 +88,7 @@ export default function ActionsPlugin({
   isRichText: boolean;
   shouldPreserveNewLinesInMarkdown: boolean;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const [editor] = useLexicalComposerContext();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const [isSpeechToText, setIsSpeechToText] = useState(false);
@@ -97,6 +97,7 @@ export default function ActionsPlugin({
   const [modal, showModal] = useModal();
   const showFlashMessage = useFlashMessage();
   const { isCollabActive } = useCollaborationContext();
+
   useEffect(() => {
     docFromHash(window.location.hash).then((doc) => {
       if (doc && doc.source === 'Playground') {
@@ -172,8 +173,14 @@ export default function ActionsPlugin({
             setIsSpeechToText(!isSpeechToText);
           }}
           className={'action-button action-button-mic ' + (isSpeechToText ? 'active' : '')}
-          title="Speech To Text"
-          aria-label={`${isSpeechToText ? 'Enable' : 'Disable'} speech to text`}
+          title={formatMessage({
+            id: 'lexical.plugin.actions.speech.title',
+            defaultMessage: 'Speech To Text',
+          })}
+          aria-label={formatMessage(
+            { id: 'lexical.plugin.actions.speech.aria', defaultMessage: '{state} speech to text' },
+            { state: isSpeechToText ? 'Disable' : 'Enable' }
+          )}
         >
           <i className="mic" />
         </button>
@@ -181,8 +188,14 @@ export default function ActionsPlugin({
       <button
         className="action-button import"
         onClick={() => importFile(editor)}
-        title="Import"
-        aria-label="Import editor state from JSON"
+        title={formatMessage({
+          id: 'lexical.plugin.actions.import.title',
+          defaultMessage: 'Import',
+        })}
+        aria-label={formatMessage({
+          id: 'lexical.plugin.actions.import.aria',
+          defaultMessage: 'Import editor state from JSON',
+        })}
       >
         <i className="import" />
       </button>
@@ -191,12 +204,21 @@ export default function ActionsPlugin({
         className="action-button export"
         onClick={() =>
           exportFile(editor, {
-            fileName: `Playground ${new Date().toISOString()}`,
+            fileName: formatMessage(
+              { id: 'lexical.plugin.actions.export.filename', defaultMessage: 'Playground {date}' },
+              { date: new Date().toISOString() }
+            ),
             source: 'Playground',
           })
         }
-        title="Export"
-        aria-label="Export editor state to JSON"
+        title={formatMessage({
+          id: 'lexical.plugin.actions.export.title',
+          defaultMessage: 'Export',
+        })}
+        aria-label={formatMessage({
+          id: 'lexical.plugin.actions.export.aria',
+          defaultMessage: 'Export editor state to JSON',
+        })}
       >
         <i className="export" />
       </button>
@@ -208,12 +230,27 @@ export default function ActionsPlugin({
               source: 'Playground',
             })
           ).then(
-            () => showFlashMessage('URL copied to clipboard'),
-            () => showFlashMessage('URL could not be copied to clipboard')
+            () =>
+              showFlashMessage(
+                formatMessage({
+                  id: 'lexical.plugin.actions.share.success',
+                  defaultMessage: 'URL copied to clipboard',
+                })
+              ),
+            () =>
+              showFlashMessage(
+                formatMessage({
+                  id: 'lexical.plugin.actions.share.error',
+                  defaultMessage: 'URL could not be copied to clipboard',
+                })
+              )
           )
         }
-        title="Share"
-        aria-label="Share Playground link to current editor state"
+        title={formatMessage({ id: 'lexical.plugin.actions.share.title', defaultMessage: 'Share' })}
+        aria-label={formatMessage({
+          id: 'lexical.plugin.actions.share.aria',
+          defaultMessage: 'Share Playground link to current editor state',
+        })}
       >
         <i className="share" />
       </button>
@@ -221,12 +258,19 @@ export default function ActionsPlugin({
         className="action-button clear"
         disabled={isEditorEmpty}
         onClick={() => {
-          showModal('Clear editor', (onClose) => (
-            <ShowClearDialog editor={editor} onClose={onClose} />
-          ));
+          showModal(
+            formatMessage({
+              id: 'lexical.plugin.actions.clear.modal.title',
+              defaultMessage: 'Clear editor',
+            }),
+            (onClose) => <ShowClearDialog editor={editor} onClose={onClose} />
+          );
         }}
-        title="Clear"
-        aria-label="Clear editor contents"
+        title={formatMessage({ id: 'lexical.plugin.actions.clear.title', defaultMessage: 'Clear' })}
+        aria-label={formatMessage({
+          id: 'lexical.plugin.actions.clear.aria',
+          defaultMessage: 'Clear editor contents',
+        })}
       >
         <i className="clear" />
       </button>
@@ -239,16 +283,28 @@ export default function ActionsPlugin({
           }
           editor.setEditable(!editor.isEditable());
         }}
-        title="Read-Only Mode"
-        aria-label={`${!isEditable ? 'Unlock' : 'Lock'} read-only mode`}
+        title={formatMessage({
+          id: 'lexical.plugin.actions.readonly.title',
+          defaultMessage: 'Read-Only Mode',
+        })}
+        aria-label={formatMessage(
+          { id: 'lexical.plugin.actions.readonly.aria', defaultMessage: '{state} read-only mode' },
+          { state: !isEditable ? 'Unlock' : 'Lock' }
+        )}
       >
         <i className={!isEditable ? 'unlock' : 'lock'} />
       </button>
       <button
         className="action-button"
         onClick={handleMarkdownToggle}
-        title="Convert From Markdown"
-        aria-label="Convert from markdown"
+        title={formatMessage({
+          id: 'lexical.plugin.actions.markdown.title',
+          defaultMessage: 'Convert From Markdown',
+        })}
+        aria-label={formatMessage({
+          id: 'lexical.plugin.actions.markdown.aria',
+          defaultMessage: 'Convert from markdown',
+        })}
       >
         <i className="markdown" />
       </button>
@@ -264,9 +320,13 @@ function ShowClearDialog({
   editor: LexicalEditor;
   onClose: () => void;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   return (
     <>
-      Are you sure you want to clear the editor?
+      {formatMessage({
+        id: 'lexical.plugin.actions.clear.confirm',
+        defaultMessage: 'Are you sure you want to clear the editor?',
+      })}
       <div className="Modal__content">
         <Button
           onClick={() => {
@@ -275,7 +335,7 @@ function ShowClearDialog({
             onClose();
           }}
         >
-          Clear
+          {formatMessage({ id: 'lexical.plugin.actions.clear.button', defaultMessage: 'Clear' })}
         </Button>{' '}
         <Button
           onClick={() => {
@@ -283,7 +343,7 @@ function ShowClearDialog({
             onClose();
           }}
         >
-          Cancel
+          {formatMessage({ id: 'lexical.plugin.actions.cancel', defaultMessage: 'Cancel' })}
         </Button>
       </div>
     </>

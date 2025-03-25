@@ -26,9 +26,9 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
-import * as React from 'react';
 import { createPortal } from 'react-dom';
 
+import { useIntl } from 'react-intl';
 import { getDOMRangeRect } from '../../utils/getDOMRangeRect';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { setFloatingElemPosition } from '../../utils/setFloatingElemPosition';
@@ -64,6 +64,7 @@ function TextFormatFloatingToolbar({
   isUnderline: boolean;
   setIsLinkEditMode: Dispatch<boolean>;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
 
   const insertLink = useCallback(() => {
@@ -188,8 +189,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
             }}
             className={'popup-item spaced ' + (isBold ? 'active' : '')}
-            title="Bold"
-            aria-label="Format text as bold"
+            title={formatMessage({
+              id: 'lexical.plugin.format.bold.title',
+              defaultMessage: 'Bold',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.bold.aria',
+              defaultMessage: 'Format text as bold',
+            })}
           >
             <i className="format bold" />
           </button>
@@ -199,8 +206,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
             }}
             className={'popup-item spaced ' + (isItalic ? 'active' : '')}
-            title="Italic"
-            aria-label="Format text as italics"
+            title={formatMessage({
+              id: 'lexical.plugin.format.italic.title',
+              defaultMessage: 'Italic',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.italic.aria',
+              defaultMessage: 'Format text as italics',
+            })}
           >
             <i className="format italic" />
           </button>
@@ -210,8 +223,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
             }}
             className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
-            title="Underline"
-            aria-label="Format text to underlined"
+            title={formatMessage({
+              id: 'lexical.plugin.format.underline.title',
+              defaultMessage: 'Underline',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.underline.aria',
+              defaultMessage: 'Format text to underlined',
+            })}
           >
             <i className="format underline" />
           </button>
@@ -221,8 +240,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
             }}
             className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
-            title="Strikethrough"
-            aria-label="Format text with a strikethrough"
+            title={formatMessage({
+              id: 'lexical.plugin.format.strikethrough.title',
+              defaultMessage: 'Strikethrough',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.strikethrough.aria',
+              defaultMessage: 'Format text with a strikethrough',
+            })}
           >
             <i className="format strikethrough" />
           </button>
@@ -232,8 +257,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
             }}
             className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
-            title="Subscript"
-            aria-label="Format Subscript"
+            title={formatMessage({
+              id: 'lexical.plugin.format.subscript.title',
+              defaultMessage: 'Subscript',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.subscript.aria',
+              defaultMessage: 'Format Subscript',
+            })}
           >
             <i className="format subscript" />
           </button>
@@ -243,8 +274,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
             }}
             className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
-            title="Superscript"
-            aria-label="Format Superscript"
+            title={formatMessage({
+              id: 'lexical.plugin.format.superscript.title',
+              defaultMessage: 'Superscript',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.superscript.aria',
+              defaultMessage: 'Format Superscript',
+            })}
           >
             <i className="format superscript" />
           </button>
@@ -254,8 +291,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'uppercase');
             }}
             className={'popup-item spaced ' + (isUppercase ? 'active' : '')}
-            title="Uppercase"
-            aria-label="Format text to uppercase"
+            title={formatMessage({
+              id: 'lexical.plugin.format.uppercase.title',
+              defaultMessage: 'Uppercase',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.uppercase.aria',
+              defaultMessage: 'Format text to uppercase',
+            })}
           >
             <i className="format uppercase" />
           </button>
@@ -265,8 +308,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'lowercase');
             }}
             className={'popup-item spaced ' + (isLowercase ? 'active' : '')}
-            title="Lowercase"
-            aria-label="Format text to lowercase"
+            title={formatMessage({
+              id: 'lexical.plugin.format.lowercase.title',
+              defaultMessage: 'Lowercase',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.lowercase.aria',
+              defaultMessage: 'Format text to lowercase',
+            })}
           >
             <i className="format lowercase" />
           </button>
@@ -276,8 +325,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'capitalize');
             }}
             className={'popup-item spaced ' + (isCapitalize ? 'active' : '')}
-            title="Capitalize"
-            aria-label="Format text to capitalize"
+            title={formatMessage({
+              id: 'lexical.plugin.format.capitalize.title',
+              defaultMessage: 'Capitalize',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.capitalize.aria',
+              defaultMessage: 'Format text to capitalize',
+            })}
           >
             <i className="format capitalize" />
           </button>
@@ -287,8 +342,14 @@ function TextFormatFloatingToolbar({
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
             }}
             className={'popup-item spaced ' + (isCode ? 'active' : '')}
-            title="Insert code block"
-            aria-label="Insert code block"
+            title={formatMessage({
+              id: 'lexical.plugin.format.code.title',
+              defaultMessage: 'Insert code block',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.code.aria',
+              defaultMessage: 'Insert code block',
+            })}
           >
             <i className="format code" />
           </button>
@@ -296,8 +357,14 @@ function TextFormatFloatingToolbar({
             type="button"
             onClick={insertLink}
             className={'popup-item spaced ' + (isLink ? 'active' : '')}
-            title="Insert link"
-            aria-label="Insert link"
+            title={formatMessage({
+              id: 'lexical.plugin.format.link.title',
+              defaultMessage: 'Insert link',
+            })}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.format.link.aria',
+              defaultMessage: 'Insert link',
+            })}
           >
             <i className="format link" />
           </button>

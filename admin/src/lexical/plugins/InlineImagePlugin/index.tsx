@@ -5,8 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type { Position } from '../../nodes/InlineImageNode/InlineImageNode';
 import type { JSX } from 'react';
+import type { Position } from '../../nodes/InlineImageNode/InlineImageNode';
 
 import '../../nodes/InlineImageNode/InlineImageNode.css';
 
@@ -34,6 +34,7 @@ import {
 } from 'lexical';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import {
   $createInlineImageNode,
@@ -60,6 +61,7 @@ export function InsertInlineImageDialog({
   activeEditor: LexicalEditor;
   onClose: () => void;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const hasModifier = useRef(false);
 
   const [src, setSrc] = useState('');
@@ -111,7 +113,10 @@ export function InsertInlineImageDialog({
     <>
       <div style={{ marginBottom: '1em' }}>
         <FileInput
-          label="Image Upload"
+          label={formatMessage({
+            id: 'lexical.plugin.inline-image.upload.label',
+            defaultMessage: 'Image Upload',
+          })}
           onChange={loadImage}
           accept="image/*"
           data-test-id="image-modal-file-upload"
@@ -119,8 +124,14 @@ export function InsertInlineImageDialog({
       </div>
       <div style={{ marginBottom: '1em' }}>
         <TextInput
-          label="Alt Text"
-          placeholder="Descriptive alternative text"
+          label={formatMessage({
+            id: 'lexical.plugin.inline-image.alt.label',
+            defaultMessage: 'Alt Text',
+          })}
+          placeholder={formatMessage({
+            id: 'lexical.plugin.inline-image.alt.placeholder',
+            defaultMessage: 'Descriptive alternative text',
+          })}
           onChange={setAltText}
           value={altText}
           data-test-id="image-modal-alt-text-input"
@@ -129,14 +140,32 @@ export function InsertInlineImageDialog({
 
       <Select
         style={{ marginBottom: '1em', width: '290px' }}
-        label="Position"
+        label={formatMessage({
+          id: 'lexical.plugin.inline-image.position.label',
+          defaultMessage: 'Position',
+        })}
         name="position"
         id="position-select"
         onChange={handlePositionChange}
       >
-        <option value="left">Left</option>
-        <option value="right">Right</option>
-        <option value="full">Full Width</option>
+        <option value="left">
+          {formatMessage({
+            id: 'lexical.plugin.inline-image.position.left',
+            defaultMessage: 'Left',
+          })}
+        </option>
+        <option value="right">
+          {formatMessage({
+            id: 'lexical.plugin.inline-image.position.right',
+            defaultMessage: 'Right',
+          })}
+        </option>
+        <option value="full">
+          {formatMessage({
+            id: 'lexical.plugin.inline-image.position.full',
+            defaultMessage: 'Full Width',
+          })}
+        </option>
       </Select>
 
       <div className="Input__wrapper">
@@ -147,7 +176,12 @@ export function InsertInlineImageDialog({
           checked={showCaption}
           onChange={handleShowCaptionChange}
         />
-        <label htmlFor="caption">Show Caption</label>
+        <label htmlFor="caption">
+          {formatMessage({
+            id: 'lexical.plugin.inline-image.caption.label',
+            defaultMessage: 'Show Caption',
+          })}
+        </label>
       </div>
 
       <DialogActions>
@@ -156,7 +190,10 @@ export function InsertInlineImageDialog({
           disabled={isDisabled}
           onClick={() => handleOnClick()}
         >
-          Confirm
+          {formatMessage({
+            id: 'lexical.plugin.inline-image.button.confirm',
+            defaultMessage: 'Confirm',
+          })}
         </Button>
       </DialogActions>
     </>

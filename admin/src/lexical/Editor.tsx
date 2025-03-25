@@ -7,6 +7,8 @@
  */
 
 import type { JSX } from 'react';
+import { useIntl } from 'react-intl';
+
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin';
@@ -26,7 +28,6 @@ import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
 import { useEffect, useState } from 'react';
-import { CAN_USE_DOM } from './utils/environment';
 
 import { EditorState, SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { useSharedHistoryContext } from './context/SharedHistoryContext';
@@ -60,6 +61,7 @@ import PollPlugin from './plugins/PollPlugin';
 import ShortcutsPlugin from './plugins/ShortcutsPlugin';
 import SpecialTextPlugin from './plugins/SpecialTextPlugin';
 import SpeechToTextPlugin from './plugins/SpeechToTextPlugin';
+import StrapiImagePlugin from './plugins/StrapiImagePlugin';
 import StrapiOnChangePlugin from './plugins/StrapiOnChangePlugin';
 import TabFocusPlugin from './plugins/TabFocusPlugin';
 import TableCellActionMenuPlugin from './plugins/TableActionMenuPlugin';
@@ -71,9 +73,7 @@ import TreeViewPlugin from './plugins/TreeViewPlugin';
 import TwitterPlugin from './plugins/TwitterPlugin';
 import YouTubePlugin from './plugins/YouTubePlugin';
 import ContentEditable from './ui/ContentEditable';
-
-import StrapiImagePlugin from './plugins/StrapiImagePlugin';
-import WordCountPlugin from './plugins/WordCountPlugin';
+import { CAN_USE_DOM } from './utils/environment';
 
 import './styles.css';
 
@@ -86,6 +86,7 @@ interface LexicalEditorProps {
 }
 
 export default function Editor(props: LexicalEditorProps): JSX.Element {
+  const { formatMessage } = useIntl();
   const { historyState } = useSharedHistoryContext();
 
   const isCollab = false;
@@ -106,11 +107,15 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
   const selectionAlwaysOnDisplay = false;
 
   const isEditable = useLexicalEditable();
-  const placeholder = isCollab
-    ? 'Enter some collaborative rich text...'
-    : isRichText
-      ? 'Enter some rich text...'
-      : 'Enter some plain text...';
+  const placeholder = formatMessage(
+    {
+      id: 'lexical.editor.placeholder',
+      defaultMessage:
+        'Enter some {state, select, collab {collaborative rich} rich {rich} other {plain}} text...',
+    },
+    { state: isCollab ? 'collab' : isRichText ? 'rich' : 'plain' }
+  );
+
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
   const [isSmallWidthViewport, setIsSmallWidthViewport] = useState<boolean>(false);
   const [editor] = useLexicalComposerContext();

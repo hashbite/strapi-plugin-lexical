@@ -6,8 +6,8 @@
  *
  */
 
-import type { Option, Options, PollNode } from './PollNode';
 import type { JSX } from 'react';
+import type { Option, Options, PollNode } from './PollNode';
 
 import './PollNode.css';
 
@@ -26,9 +26,9 @@ import {
   KEY_DELETE_COMMAND,
   NodeKey,
 } from 'lexical';
-import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useIntl } from 'react-intl';
 import Button from '../ui/Button';
 import joinClasses from '../utils/joinClasses';
 import { $isPollNode, createPollOption } from './PollNode';
@@ -59,6 +59,7 @@ function PollOptionComponent({
   const checked = checkedIndex !== -1;
   const votes = votesArray.length;
   const text = option.text;
+  const { formatMessage } = useIntl();
 
   return (
     <div className="PollNode__optionContainer">
@@ -86,7 +87,14 @@ function PollOptionComponent({
           style={{ width: `${votes === 0 ? 0 : (votes / totalVotes) * 100}%` }}
         />
         <span className="PollNode__optionInputVotesCount">
-          {votes > 0 && (votes === 1 ? '1 vote' : `${votes} votes`)}
+          {votes > 0 &&
+            formatMessage(
+              {
+                id: 'lexical.nodes.poll.votes',
+                defaultMessage: '{count} {count, plural, one {vote} other {votes}}',
+              },
+              { count: votes }
+            )}
         </span>
         <input
           className="PollNode__optionInput"
@@ -107,7 +115,10 @@ function PollOptionComponent({
               }
             );
           }}
-          placeholder={`Option ${index + 1}`}
+          placeholder={formatMessage(
+            { id: 'lexical.nodes.poll.option.placeholder', defaultMessage: 'Option {number}' },
+            { number: index + 1 }
+          )}
         />
       </div>
       <button
@@ -116,7 +127,10 @@ function PollOptionComponent({
           'PollNode__optionDelete',
           options.length < 3 && 'PollNode__optionDeleteDisabled'
         )}
-        aria-label="Remove"
+        aria-label={formatMessage({
+          id: 'lexical.nodes.poll.option.remove',
+          defaultMessage: 'Remove',
+        })}
         onClick={() => {
           withPollNode((node) => {
             node.deleteOption(option);
@@ -136,6 +150,8 @@ export default function PollComponent({
   options: Options;
   question: string;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   const [editor] = useLexicalComposerContext();
   const totalVotes = useMemo(() => getTotalVotes(options), [options]);
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
@@ -225,7 +241,7 @@ export default function PollComponent({
         })}
         <div className="PollNode__footer">
           <Button onClick={addOption} small={true}>
-            Add Option
+            {formatMessage({ id: 'lexical.nodes.poll.option.add', defaultMessage: 'Add Option' })}
           </Button>
         </div>
       </div>

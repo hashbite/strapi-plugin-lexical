@@ -5,9 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import type { Position } from './InlineImageNode';
 import type { BaseSelection, LexicalEditor, NodeKey } from 'lexical';
 import type { JSX } from 'react';
+import type { Position } from './InlineImageNode';
 
 import './InlineImageNode.css';
 
@@ -35,6 +35,7 @@ import {
 } from 'lexical';
 import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import useModal from '../../hooks/useModal';
 import LinkPlugin from '../../plugins/LinkPlugin';
@@ -104,6 +105,7 @@ export function UpdateInlineImageDialog({
   nodeKey: NodeKey;
   onClose: () => void;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const editorState = activeEditor.getEditorState();
   const node = editorState.read(() => $getNodeByKey(nodeKey) as InlineImageNode);
   const [altText, setAltText] = useState(node.getAltText());
@@ -132,8 +134,14 @@ export function UpdateInlineImageDialog({
     <>
       <div style={{ marginBottom: '1em' }}>
         <TextInput
-          label="Alt Text"
-          placeholder="Descriptive alternative text"
+          label={formatMessage({
+            id: 'lexical.nodes.inline-image-dialog.alt-text.label',
+            defaultMessage: 'Alt Text',
+          })}
+          placeholder={formatMessage({
+            id: 'lexical.nodes.inline-image-dialog.alt-text.placeholder',
+            defaultMessage: 'Descriptive alternative text',
+          })}
           onChange={setAltText}
           value={altText}
           data-test-id="image-modal-alt-text-input"
@@ -143,14 +151,32 @@ export function UpdateInlineImageDialog({
       <Select
         style={{ marginBottom: '1em', width: '208px' }}
         value={position}
-        label="Position"
+        label={formatMessage({
+          id: 'lexical.nodes.inline-image-dialog.position.label',
+          defaultMessage: 'Position',
+        })}
         name="position"
         id="position-select"
         onChange={handlePositionChange}
       >
-        <option value="left">Left</option>
-        <option value="right">Right</option>
-        <option value="full">Full Width</option>
+        <option value="left">
+          {formatMessage({
+            id: 'lexical.nodes.inline-image-dialog.position.left',
+            defaultMessage: 'Left',
+          })}
+        </option>
+        <option value="right">
+          {formatMessage({
+            id: 'lexical.nodes.inline-image-dialog.position.right',
+            defaultMessage: 'Right',
+          })}
+        </option>
+        <option value="full">
+          {formatMessage({
+            id: 'lexical.nodes.inline-image-dialog.position.full',
+            defaultMessage: 'Full Width',
+          })}
+        </option>
       </Select>
 
       <div className="Input__wrapper">
@@ -160,12 +186,20 @@ export function UpdateInlineImageDialog({
           checked={showCaption}
           onChange={handleShowCaptionChange}
         />
-        <label htmlFor="caption">Show Caption</label>
+        <label htmlFor="caption">
+          {formatMessage({
+            id: 'lexical.nodes.inline-image-dialog.caption.label',
+            defaultMessage: 'Show Caption',
+          })}
+        </label>
       </div>
 
       <DialogActions>
         <Button data-test-id="image-modal-file-upload-btn" onClick={() => handleOnConfirm()}>
-          Confirm
+          {formatMessage({
+            id: 'lexical.nodes.inline-image-dialog.confirm',
+            defaultMessage: 'Confirm',
+          })}
         </Button>
       </DialogActions>
     </>
@@ -191,6 +225,8 @@ export default function InlineImageComponent({
   width: 'inherit' | number;
   position: Position;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   const [modal, showModal] = useModal();
   const imageRef = useRef<null | HTMLImageElement>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -332,16 +368,25 @@ export default function InlineImageComponent({
               className="image-edit-button"
               ref={buttonRef}
               onClick={() => {
-                showModal('Update Inline Image', (onClose) => (
-                  <UpdateInlineImageDialog
-                    activeEditor={editor}
-                    nodeKey={nodeKey}
-                    onClose={onClose}
-                  />
-                ));
+                showModal(
+                  formatMessage({
+                    id: 'lexical.nodes.inline-image-component.update-inline-image',
+                    defaultMessage: 'Update Inline Image',
+                  }),
+                  (onClose) => (
+                    <UpdateInlineImageDialog
+                      activeEditor={editor}
+                      nodeKey={nodeKey}
+                      onClose={onClose}
+                    />
+                  )
+                );
               }}
             >
-              Edit
+              {formatMessage({
+                id: 'lexical.nodes.inline-image-component.edit-button',
+                defaultMessage: 'Edit',
+              })}
             </button>
           )}
           <LazyImage
@@ -364,7 +409,10 @@ export default function InlineImageComponent({
               <RichTextPlugin
                 contentEditable={
                   <ContentEditable
-                    placeholder="Enter a caption..."
+                    placeholder={formatMessage({
+                      id: 'lexical.nodes.inline-image-component.enter-caption',
+                      defaultMessage: 'Enter a caption...',
+                    })}
                     placeholderClassName="InlineImageNode__placeholder"
                     className="InlineImageNode__contentEditable"
                   />

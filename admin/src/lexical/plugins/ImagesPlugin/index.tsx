@@ -31,7 +31,6 @@ import {
   LexicalEditor,
 } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
-import * as React from 'react';
 
 import landscapeImage from '../../images/landscape.jpg';
 import yellowFlowerImage from '../../images/yellow-flower.jpg';
@@ -46,11 +45,14 @@ export type InsertImagePayload = Readonly<ImagePayload>;
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> =
   createCommand('INSERT_IMAGE_COMMAND');
 
+import { useIntl } from 'react-intl';
+
 export function InsertImageUriDialogBody({
   onClick,
 }: {
   onClick: (payload: InsertImagePayload) => void;
 }) {
+  const { formatMessage } = useIntl();
   const [src, setSrc] = useState('');
   const [altText, setAltText] = useState('');
 
@@ -59,15 +61,21 @@ export function InsertImageUriDialogBody({
   return (
     <>
       <TextInput
-        label="Image URL"
-        placeholder="i.e. https://source.unsplash.com/random"
+        label={formatMessage({ id: 'lexical.plugin.image.url.label', defaultMessage: 'Image URL' })}
+        placeholder={formatMessage({
+          id: 'lexical.plugin.image.url.placeholder',
+          defaultMessage: 'i.e. https://source.unsplash.com/random',
+        })}
         onChange={setSrc}
         value={src}
         data-test-id="image-modal-url-input"
       />
       <TextInput
-        label="Alt Text"
-        placeholder="Random unsplash image"
+        label={formatMessage({ id: 'lexical.plugin.image.alt.label', defaultMessage: 'Alt Text' })}
+        placeholder={formatMessage({
+          id: 'lexical.plugin.image.alt.placeholder',
+          defaultMessage: 'Random unsplash image',
+        })}
         onChange={setAltText}
         value={altText}
         data-test-id="image-modal-alt-text-input"
@@ -78,7 +86,7 @@ export function InsertImageUriDialogBody({
           disabled={isDisabled}
           onClick={() => onClick({ altText, src })}
         >
-          Confirm
+          {formatMessage({ id: 'lexical.plugin.image.button.confirm', defaultMessage: 'Confirm' })}
         </Button>
       </DialogActions>
     </>
@@ -90,6 +98,7 @@ export function InsertImageUploadedDialogBody({
 }: {
   onClick: (payload: InsertImagePayload) => void;
 }) {
+  const { formatMessage } = useIntl();
   const [src, setSrc] = useState('');
   const [altText, setAltText] = useState('');
 
@@ -111,14 +120,20 @@ export function InsertImageUploadedDialogBody({
   return (
     <>
       <FileInput
-        label="Image Upload"
+        label={formatMessage({
+          id: 'lexical.plugin.image.upload.label',
+          defaultMessage: 'Image Upload',
+        })}
         onChange={loadImage}
         accept="image/*"
         data-test-id="image-modal-file-upload"
       />
       <TextInput
-        label="Alt Text"
-        placeholder="Descriptive alternative text"
+        label={formatMessage({ id: 'lexical.plugin.image.alt.label', defaultMessage: 'Alt Text' })}
+        placeholder={formatMessage({
+          id: 'lexical.plugin.image.alt.upload.placeholder',
+          defaultMessage: 'Descriptive alternative text',
+        })}
         onChange={setAltText}
         value={altText}
         data-test-id="image-modal-alt-text-input"
@@ -129,7 +144,7 @@ export function InsertImageUploadedDialogBody({
           disabled={isDisabled}
           onClick={() => onClick({ altText, src })}
         >
-          Confirm
+          {formatMessage({ id: 'lexical.plugin.image.button.confirm', defaultMessage: 'Confirm' })}
         </Button>
       </DialogActions>
     </>
@@ -143,6 +158,7 @@ export function InsertImageDialog({
   activeEditor: LexicalEditor;
   onClose: () => void;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const [mode, setMode] = useState<null | 'url' | 'file'>(null);
   const hasModifier = useRef(false);
 
@@ -172,23 +188,30 @@ export function InsertImageDialog({
               onClick(
                 hasModifier.current
                   ? {
-                      altText: 'Daylight fir trees forest glacier green high ice landscape',
+                      altText: formatMessage({
+                        id: 'lexical.plugin.image.sample.landscape.alt',
+                        defaultMessage:
+                          'Daylight fir trees forest glacier green high ice landscape',
+                      }),
                       src: landscapeImage,
                     }
                   : {
-                      altText: 'Yellow flower in tilt shift lens',
+                      altText: formatMessage({
+                        id: 'lexical.plugin.image.sample.flower.alt',
+                        defaultMessage: 'Yellow flower in tilt shift lens',
+                      }),
                       src: yellowFlowerImage,
                     }
               )
             }
           >
-            Sample
+            {formatMessage({ id: 'lexical.plugin.image.button.sample', defaultMessage: 'Sample' })}
           </Button>
           <Button data-test-id="image-modal-option-url" onClick={() => setMode('url')}>
-            URL
+            {formatMessage({ id: 'lexical.plugin.image.button.url', defaultMessage: 'URL' })}
           </Button>
           <Button data-test-id="image-modal-option-file" onClick={() => setMode('file')}>
-            File
+            {formatMessage({ id: 'lexical.plugin.image.button.file', defaultMessage: 'File' })}
           </Button>
         </DialogButtonsList>
       )}

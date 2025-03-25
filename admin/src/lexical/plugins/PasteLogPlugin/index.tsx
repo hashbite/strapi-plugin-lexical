@@ -10,13 +10,15 @@ import type { JSX } from 'react';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { COMMAND_PRIORITY_NORMAL, PASTE_COMMAND } from 'lexical';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export default function PasteLogPlugin(): JSX.Element {
+  const { formatMessage } = useIntl();
   const [editor] = useLexicalComposerContext();
   const [isActive, setIsActive] = useState(false);
   const [lastClipboardData, setLastClipboardData] = useState<string | null>(null);
+
   useEffect(() => {
     if (isActive) {
       return editor.registerCommand(
@@ -44,7 +46,15 @@ export default function PasteLogPlugin(): JSX.Element {
         onClick={() => {
           setIsActive(!isActive);
         }}
-        title={isActive ? 'Disable paste log' : 'Enable paste log'}
+        title={formatMessage(
+          {
+            id: 'lexical.plugin.paste-log.button.title',
+            defaultMessage: 'Paste log {state, select, true {disabled} false {enabled}}',
+          },
+          {
+            state: isActive,
+          }
+        )}
       />
       {isActive && lastClipboardData !== null ? <pre>{lastClipboardData}</pre> : null}
     </>

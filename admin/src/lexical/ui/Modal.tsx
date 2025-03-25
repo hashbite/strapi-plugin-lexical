@@ -11,9 +11,9 @@ import type { JSX } from 'react';
 import './Modal.css';
 
 import { isDOMNode } from 'lexical';
-import * as React from 'react';
 import { ReactNode, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useIntl } from 'react-intl';
 
 function PortalImpl({
   onClose,
@@ -26,6 +26,7 @@ function PortalImpl({
   onClose: () => void;
   title: string;
 }) {
+  const { formatMessage } = useIntl();
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,12 +72,22 @@ function PortalImpl({
   }, [closeOnClickOutside, onClose]);
 
   return (
-    <div className="Modal__overlay" role="dialog">
+    <div
+      className="Modal__overlay"
+      role="dialog"
+      aria-label={formatMessage({
+        id: 'lexical.ui.modal.dialog.aria',
+        defaultMessage: 'Modal dialog',
+      })}
+    >
       <div className="Modal__modal" tabIndex={-1} ref={modalRef}>
         <h2 className="Modal__title">{title}</h2>
         <button
           className="Modal__closeButton"
-          aria-label="Close modal"
+          aria-label={formatMessage({
+            id: 'lexical.ui.modal.close.aria',
+            defaultMessage: 'Close modal',
+          })}
           type="button"
           onClick={onClose}
         >

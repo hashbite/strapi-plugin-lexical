@@ -26,6 +26,7 @@ import {
 } from 'lexical';
 import { useCallback, useEffect } from 'react';
 
+import { useIntl } from 'react-intl';
 import { useToolbarState } from '../../context/ToolbarContext';
 import { $createAutocompleteNode, AutocompleteNode } from '../../nodes/AutocompleteNode';
 import { addSwipeRightListener } from '../../utils/swipe';
@@ -86,13 +87,23 @@ function useQuery(): (searchText: string) => SearchPromise {
 }
 
 function formatSuggestionText(suggestion: string): string {
+  const { formatMessage } = useIntl();
   const userAgentData = window.navigator.userAgentData;
   const isMobile =
     userAgentData !== undefined
       ? userAgentData.mobile
       : window.innerWidth <= 800 && window.innerHeight <= 600;
 
-  return `${suggestion} ${isMobile ? '(SWIPE \u2B95)' : '(TAB)'}`;
+  return formatMessage(
+    {
+      id: 'lexical.plugin.autocomplete.suggestion.action',
+      defaultMessage: '{suggestion} {device, select, mobile {(SWIPE →)} desktop {(TAB)}',
+    },
+    {
+      suggestion,
+      device: isMobile ? 'mobile' : 'desktop',
+    }
+  );
 }
 
 export default function AutocompletePlugin(): JSX.Element | null {
@@ -286,6 +297,7 @@ class AutocompleteServer {
   };
 }
 
+// @todo move to a dictionaries folder and add for other languages
 // https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english-usa-no-swears-long.txt
 const DICTIONARY = [
   'information',

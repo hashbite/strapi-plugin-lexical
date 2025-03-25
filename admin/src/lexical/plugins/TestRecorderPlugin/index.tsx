@@ -8,10 +8,10 @@
 
 import type { BaseSelection, LexicalEditor } from 'lexical';
 import type { JSX } from 'react';
+import { useIntl } from 'react-intl';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createParagraphNode, $createTextNode, $getRoot, getDOMSelection } from 'lexical';
-import * as React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { IS_APPLE } from '../../utils/environment';
 import useLayoutEffect from '../../utils/useLayoutEffect';
@@ -144,6 +144,7 @@ type Step = {
 type Steps = Step[];
 
 function useTestRecorder(editor: LexicalEditor): [JSX.Element, JSX.Element | null] {
+  const { formatMessage } = useIntl();
   const [steps, setSteps] = useState<Steps>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [, setCurrentInnerHTML] = useState('');
@@ -404,28 +405,46 @@ ${steps.map(formatStep).join(`\n`)}
       id="test-recorder-button"
       className={`editor-dev-button ${isRecording ? 'active' : ''}`}
       onClick={() => toggleEditorSelection(getCurrentEditor())}
-      title={isRecording ? 'Disable test recorder' : 'Enable test recorder'}
+      title={formatMessage(
+        {
+          id: 'lexical.plugin.test-recorder.button.state',
+          defaultMessage: '{state, select, true {Disable} false {Enable}} test recorder',
+        },
+        {
+          state: isRecording,
+        }
+      )}
     />
   );
+
   const output = isRecording ? (
     <div className="test-recorder-output">
       <div className="test-recorder-toolbar">
         <button
           className="test-recorder-button"
           id="test-recorder-button-snapshot"
-          title="Insert snapshot"
+          title={formatMessage({
+            id: 'lexical.plugin.test-recorder.snapshot.title',
+            defaultMessage: 'Insert snapshot',
+          })}
           onClick={onSnapshotClick}
         />
         <button
           className="test-recorder-button"
           id="test-recorder-button-copy"
-          title="Copy to clipboard"
+          title={formatMessage({
+            id: 'lexical.plugin.test-recorder.copy.title',
+            defaultMessage: 'Copy to clipboard',
+          })}
           onClick={onCopyClick}
         />
         <button
           className="test-recorder-button"
           id="test-recorder-button-download"
-          title="Download as a file"
+          title={formatMessage({
+            id: 'lexical.plugin.test-recorder.download.title',
+            defaultMessage: 'Download as a file',
+          })}
           onClick={onDownloadClick}
         />
       </div>

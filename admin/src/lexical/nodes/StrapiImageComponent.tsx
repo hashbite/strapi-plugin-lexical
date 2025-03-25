@@ -41,6 +41,8 @@ export const RIGHT_CLICK_STRAPI_IMAGE_COMMAND: LexicalCommand<MouseEvent> = crea
   'RIGHT_CLICK_STRAPI_IMAGE_COMMAND'
 );
 
+import { useIntl } from 'react-intl';
+
 function useSuspenseImage(src: string) {
   if (!imageCache.has(src)) {
     throw new Promise((resolve) => {
@@ -67,11 +69,24 @@ function LazyImage({
   src: string;
   onError: () => void;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   useSuspenseImage(src);
-  return <img className={className || undefined} src={src} onError={onError} draggable="false" />;
+  return (
+    <img
+      className={className || undefined}
+      src={src}
+      onError={onError}
+      draggable="false"
+      alt={formatMessage({
+        id: 'lexical.nodes.image.strapi.alt',
+        defaultMessage: 'Strapi media library image',
+      })}
+    />
+  );
 }
 
 function BrokenImage(): JSX.Element {
+  const { formatMessage } = useIntl();
   return (
     <img
       src={brokenImage}
@@ -81,6 +96,7 @@ function BrokenImage(): JSX.Element {
         width: 200,
       }}
       draggable="false"
+      alt={formatMessage({ id: 'lexical.nodes.image.broken.alt', defaultMessage: 'Broken image' })}
     />
   );
 }

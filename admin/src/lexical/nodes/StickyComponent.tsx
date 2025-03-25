@@ -12,7 +12,6 @@ import type { JSX } from 'react';
 import './StickyNode.css';
 
 import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
-import { CollaborationPlugin } from '@lexical/react/LexicalCollaborationPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
@@ -20,7 +19,6 @@ import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { calculateZoomLevel } from '@lexical/utils';
 import { $getNodeByKey } from 'lexical';
-import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import useLayoutEffect from '../utils/useLayoutEffect';
 
@@ -47,6 +45,8 @@ function positionSticky(stickyElem: HTMLElement, positioning: Positioning): void
   style.left = rectLeft + positioning.x + 'px';
 }
 
+import { useIntl } from 'react-intl';
+
 export default function StickyComponent({
   x,
   y,
@@ -60,6 +60,8 @@ export default function StickyComponent({
   x: number;
   y: number;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   const [editor] = useLexicalComposerContext();
   const stickyContainerRef = useRef<null | HTMLDivElement>(null);
   const positioningRef = useRef<Positioning>({
@@ -215,16 +217,22 @@ export default function StickyComponent({
         <button
           onClick={handleDelete}
           className="delete"
-          aria-label="Delete sticky note"
-          title="Delete"
+          aria-label={formatMessage({
+            id: 'lexical.sticky.delete.aria',
+            defaultMessage: 'Delete sticky note',
+          })}
+          title={formatMessage({ id: 'lexical.sticky.delete.title', defaultMessage: 'Delete' })}
         >
-          X
+          {/*  @todo use an icon */}X
         </button>
         <button
           onClick={handleColorChange}
           className="color"
-          aria-label="Change sticky note color"
-          title="Color"
+          aria-label={formatMessage({
+            id: 'lexical.sticky.color.aria',
+            defaultMessage: 'Change sticky note color',
+          })}
+          title={formatMessage({ id: 'lexical.sticky.color.title', defaultMessage: 'Color' })}
         >
           <i className="bucket" />
         </button>
@@ -233,7 +241,10 @@ export default function StickyComponent({
           <PlainTextPlugin
             contentEditable={
               <ContentEditable
-                placeholder="What's up?"
+                placeholder={formatMessage({
+                  id: 'lexical.sticky.placeholder',
+                  defaultMessage: "What's up?",
+                })}
                 placeholderClassName="StickyNode__placeholder"
                 className="StickyNode__contentEditable"
               />

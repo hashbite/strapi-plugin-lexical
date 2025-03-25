@@ -7,10 +7,9 @@
  */
 import { $isCodeNode } from '@lexical/code';
 import { $getNearestNodeFromDOMNode, $getSelection, $setSelection, LexicalEditor } from 'lexical';
-import * as React from 'react';
 import { useState } from 'react';
 
-import { useDebounce } from '../../utils';
+import { useDebounce } from '../../../../hooks/useDebounce';
 
 interface Props {
   editor: LexicalEditor;

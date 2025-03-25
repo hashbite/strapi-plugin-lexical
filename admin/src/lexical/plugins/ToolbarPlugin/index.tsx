@@ -7,6 +7,7 @@
  */
 
 import type { JSX } from 'react';
+import { useIntl } from 'react-intl';
 
 import {
   $isCodeNode,
@@ -52,15 +53,15 @@ import {
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from 'lexical';
-import { Dispatch, useCallback, useEffect, useState } from 'react';
 import * as React from 'react';
+import { Dispatch, useCallback, useEffect, useState } from 'react';
 import { IS_APPLE } from '../../utils/environment';
 
+import { useStrapiApp } from '@strapi/strapi/admin';
 import { blockTypeToBlockName, useToolbarState } from '../../context/ToolbarContext';
 import useModal from '../../hooks/useModal';
 import { $createStickyNode } from '../../nodes/StickyNode';
 import DropDown, { DropDownItem } from '../../ui/DropDown';
-import DropdownColorPicker from '../../ui/DropdownColorPicker';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { sanitizeUrl } from '../../utils/url';
 import { EmbedConfigs } from '../AutoEmbedPlugin';
@@ -72,8 +73,8 @@ import InsertLayoutDialog from '../LayoutPlugin/InsertLayoutDialog';
 import { INSERT_PAGE_BREAK } from '../PageBreakPlugin';
 import { InsertPollDialog } from '../PollPlugin';
 import { SHORTCUTS } from '../ShortcutsPlugin/shortcuts';
+import { InsertStrapiImageDialog } from '../StrapiImagePlugin';
 import { InsertTableDialog } from '../TablePlugin';
-import FontSize from './fontSize';
 import {
   clearFormatting,
   formatBulletList,
@@ -84,8 +85,6 @@ import {
   formatParagraph,
   formatQuote,
 } from './utils';
-import { useStrapiApp } from '@strapi/strapi/admin';
-import { InsertStrapiImageDialog } from '../StrapiImagePlugin';
 
 const rootTypeToRootName = {
   root: 'Root',
@@ -174,6 +173,7 @@ function dropDownActiveClass(active: boolean) {
   }
 }
 
+// @todo: extract to external file
 function BlockFormatDropDown({
   editor,
   blockType,
@@ -185,13 +185,21 @@ function BlockFormatDropDown({
   editor: LexicalEditor;
   disabled?: boolean;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   return (
     <DropDown
       disabled={disabled}
       buttonClassName="toolbar-item block-controls"
       buttonIconClassName={'icon block-type ' + blockType}
-      buttonLabel={blockTypeToBlockName[blockType]}
-      buttonAriaLabel="Formatting options for text style"
+      buttonLabel={formatMessage({
+        id: `lexical.content.block.type.${blockType}`,
+        defaultMessage: blockTypeToBlockName[blockType],
+      })}
+      buttonAriaLabel={formatMessage({
+        id: 'lexical.plugin.toolbar.block.aria',
+        defaultMessage: 'Formatting options for text style',
+      })}
     >
       <DropDownItem
         className={'item wide ' + dropDownActiveClass(blockType === 'paragraph')}
@@ -199,7 +207,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon paragraph" />
-          <span className="text">Normal</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.paragraph',
+              defaultMessage: 'Paragraph',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.NORMAL}</span>
       </DropDownItem>
@@ -209,7 +222,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon h1" />
-          <span className="text">Heading 1</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.h1',
+              defaultMessage: 'Heading 1',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.HEADING1}</span>
       </DropDownItem>
@@ -219,7 +237,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon h2" />
-          <span className="text">Heading 2</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.h2',
+              defaultMessage: 'Heading 2',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.HEADING2}</span>
       </DropDownItem>
@@ -229,7 +252,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon h3" />
-          <span className="text">Heading 3</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.h3',
+              defaultMessage: 'Heading 3',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.HEADING3}</span>
       </DropDownItem>
@@ -239,7 +267,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon bullet-list" />
-          <span className="text">Bullet List</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.bullet',
+              defaultMessage: 'Bullet List',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.BULLET_LIST}</span>
       </DropDownItem>
@@ -249,7 +282,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon numbered-list" />
-          <span className="text">Numbered List</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.number',
+              defaultMessage: 'Numbered List',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.NUMBERED_LIST}</span>
       </DropDownItem>
@@ -259,7 +297,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon check-list" />
-          <span className="text">Check List</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.check',
+              defaultMessage: 'Check List',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.CHECK_LIST}</span>
       </DropDownItem>
@@ -269,7 +312,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon quote" />
-          <span className="text">Quote</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.quote',
+              defaultMessage: 'Quote',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.QUOTE}</span>
       </DropDownItem>
@@ -279,7 +327,12 @@ function BlockFormatDropDown({
       >
         <div className="icon-text-container">
           <i className="icon code" />
-          <span className="text">Code Block</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.block.code',
+              defaultMessage: 'Code Block',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.CODE_BLOCK}</span>
       </DropDownItem>
@@ -291,6 +344,7 @@ function Divider(): JSX.Element {
   return <div className="divider" />;
 }
 
+// @todo: extract to external file
 function FontDropDown({
   editor,
   value,
@@ -302,6 +356,8 @@ function FontDropDown({
   style: string;
   disabled?: boolean;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   const handleClick = useCallback(
     (option: string) => {
       editor.update(() => {
@@ -316,10 +372,13 @@ function FontDropDown({
     [editor, style]
   );
 
-  const buttonAriaLabel =
-    style === 'font-family'
-      ? 'Formatting options for font family'
-      : 'Formatting options for font size';
+  const buttonAriaLabel = formatMessage(
+    {
+      id: `lexical.plugin.toolbar.font.button.title`,
+      defaultMessage: 'Formatting options for font {property}',
+    },
+    { property: style === 'font-family' ? 'family' : 'style' }
+  );
 
   return (
     <DropDown
@@ -344,6 +403,7 @@ function FontDropDown({
   );
 }
 
+// @todo: extract to external file
 function ElementFormatDropdown({
   editor,
   value,
@@ -355,15 +415,22 @@ function ElementFormatDropdown({
   isRTL: boolean;
   disabled: boolean;
 }) {
+  const { formatMessage } = useIntl();
   const formatOption = ELEMENT_FORMAT_OPTIONS[value || 'left'];
 
   return (
     <DropDown
       disabled={disabled}
-      buttonLabel={formatOption.name}
+      buttonLabel={formatMessage({
+        id: `lexical.plugin.toolbar.align.${value || 'left'}`,
+        defaultMessage: formatOption.name,
+      })}
       buttonIconClassName={`icon ${isRTL ? formatOption.iconRTL : formatOption.icon}`}
       buttonClassName="toolbar-item spaced alignment"
-      buttonAriaLabel="Formatting options for text alignment"
+      buttonAriaLabel={formatMessage({
+        id: 'lexical.plugin.toolbar.align.aria',
+        defaultMessage: 'Formatting options for text alignment',
+      })}
     >
       <DropDownItem
         onClick={() => {
@@ -373,7 +440,12 @@ function ElementFormatDropdown({
       >
         <div className="icon-text-container">
           <i className="icon left-align" />
-          <span className="text">Left Align</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.align.left',
+              defaultMessage: 'Left Align',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.LEFT_ALIGN}</span>
       </DropDownItem>
@@ -385,7 +457,12 @@ function ElementFormatDropdown({
       >
         <div className="icon-text-container">
           <i className="icon center-align" />
-          <span className="text">Center Align</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.align.center',
+              defaultMessage: 'Center Align',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.CENTER_ALIGN}</span>
       </DropDownItem>
@@ -397,7 +474,12 @@ function ElementFormatDropdown({
       >
         <div className="icon-text-container">
           <i className="icon right-align" />
-          <span className="text">Right Align</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.align.right',
+              defaultMessage: 'Right Align',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.RIGHT_ALIGN}</span>
       </DropDownItem>
@@ -409,7 +491,12 @@ function ElementFormatDropdown({
       >
         <div className="icon-text-container">
           <i className="icon justify-align" />
-          <span className="text">Justify Align</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.align.justify',
+              defaultMessage: 'Justify Align',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.JUSTIFY_ALIGN}</span>
       </DropDownItem>
@@ -424,7 +511,12 @@ function ElementFormatDropdown({
             isRTL ? ELEMENT_FORMAT_OPTIONS.start.iconRTL : ELEMENT_FORMAT_OPTIONS.start.icon
           }`}
         />
-        <span className="text">Start Align</span>
+        <span className="text">
+          {formatMessage({
+            id: 'lexical.plugin.toolbar.align.start',
+            defaultMessage: 'Start Align',
+          })}
+        </span>
       </DropDownItem>
       <DropDownItem
         onClick={() => {
@@ -437,7 +529,12 @@ function ElementFormatDropdown({
             isRTL ? ELEMENT_FORMAT_OPTIONS.end.iconRTL : ELEMENT_FORMAT_OPTIONS.end.icon
           }`}
         />
-        <span className="text">End Align</span>
+        <span className="text">
+          {formatMessage({
+            id: 'lexical.plugin.toolbar.align.end',
+            defaultMessage: 'End Align',
+          })}
+        </span>
       </DropDownItem>
       <Divider />
       <DropDownItem
@@ -448,7 +545,12 @@ function ElementFormatDropdown({
       >
         <div className="icon-text-container">
           <i className={'icon ' + (isRTL ? 'indent' : 'outdent')} />
-          <span className="text">Outdent</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.indent.outdent',
+              defaultMessage: 'Outdent',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.OUTDENT}</span>
       </DropDownItem>
@@ -460,7 +562,12 @@ function ElementFormatDropdown({
       >
         <div className="icon-text-container">
           <i className={'icon ' + (isRTL ? 'outdent' : 'indent')} />
-          <span className="text">Indent</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.toolbar.indent.indent',
+              defaultMessage: 'Indent',
+            })}
+          </span>
         </div>
         <span className="shortcut">{SHORTCUTS.INDENT}</span>
       </DropDownItem>
@@ -479,6 +586,8 @@ export default function ToolbarPlugin({
   setActiveEditor: Dispatch<LexicalEditor>;
   setIsLinkEditMode: Dispatch<boolean>;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(null);
   const [modal, showModal] = useModal();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
@@ -724,10 +833,16 @@ export default function ToolbarPlugin({
         onClick={() => {
           activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
-        title={IS_APPLE ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)'}
+        title={formatMessage(
+          { id: 'lexical.plugin.toolbar.undo.title', defaultMessage: 'Undo ({shortcut})' },
+          { shortcut: IS_APPLE ? '⌘Z' : 'Ctrl+Z' }
+        )}
         type="button"
         className="toolbar-item spaced"
-        aria-label="Undo"
+        aria-label={formatMessage({
+          id: 'lexical.plugin.toolbar.undo.aria',
+          defaultMessage: 'Undo',
+        })}
       >
         <i className="format undo" />
       </button>
@@ -736,10 +851,16 @@ export default function ToolbarPlugin({
         onClick={() => {
           activeEditor.dispatchCommand(REDO_COMMAND, undefined);
         }}
-        title={IS_APPLE ? 'Redo (⇧⌘Z)' : 'Redo (Ctrl+Y)'}
+        title={formatMessage(
+          { id: 'lexical.plugin.toolbar.redo.title', defaultMessage: 'Redo ({shortcut})' },
+          { shortcut: IS_APPLE ? '⇧⌘Z' : 'Ctrl+Y' }
+        )}
         type="button"
         className="toolbar-item"
-        aria-label="Redo"
+        aria-label={formatMessage({
+          id: 'lexical.plugin.toolbar.redo.aria',
+          defaultMessage: 'Redo',
+        })}
       >
         <i className="format redo" />
       </button>
@@ -802,9 +923,18 @@ export default function ToolbarPlugin({
               activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
             }}
             className={'toolbar-item spaced ' + (toolbarState.isBold ? 'active' : '')}
-            title={`Bold (${SHORTCUTS.BOLD})`}
+            title={formatMessage(
+              {
+                id: 'lexical.plugin.toolbar.format.bold.title',
+                defaultMessage: 'Bold ({shortcut})',
+              },
+              { shortcut: SHORTCUTS.BOLD }
+            )}
             type="button"
-            aria-label={`Format text as bold. Shortcut: ${SHORTCUTS.BOLD}`}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.toolbar.format.bold.aria',
+              defaultMessage: 'Format text as bold',
+            })}
           >
             <i className="format bold" />
           </button>
@@ -814,9 +944,18 @@ export default function ToolbarPlugin({
               activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
             }}
             className={'toolbar-item spaced ' + (toolbarState.isItalic ? 'active' : '')}
-            title={`Italic (${SHORTCUTS.ITALIC})`}
+            title={formatMessage(
+              {
+                id: 'lexical.plugin.toolbar.format.italic.title',
+                defaultMessage: 'Italic ({shortcut})',
+              },
+              { shortcut: SHORTCUTS.ITALIC }
+            )}
             type="button"
-            aria-label={`Format text as italics. Shortcut: ${SHORTCUTS.ITALIC}`}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.toolbar.format.italic.aria',
+              defaultMessage: 'Format text as italics',
+            })}
           >
             <i className="format italic" />
           </button>
@@ -826,9 +965,18 @@ export default function ToolbarPlugin({
               activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
             }}
             className={'toolbar-item spaced ' + (toolbarState.isUnderline ? 'active' : '')}
-            title={`Underline (${SHORTCUTS.UNDERLINE})`}
+            title={formatMessage(
+              {
+                id: 'lexical.plugin.toolbar.format.underline.title',
+                defaultMessage: 'Underline ({shortcut})',
+              },
+              { shortcut: SHORTCUTS.UNDERLINE }
+            )}
             type="button"
-            aria-label={`Format text to underlined. Shortcut: ${SHORTCUTS.UNDERLINE}`}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.toolbar.format.underline.aria',
+              defaultMessage: 'Format text to underlined',
+            })}
           >
             <i className="format underline" />
           </button>
@@ -839,9 +987,18 @@ export default function ToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
               }}
               className={'toolbar-item spaced ' + (toolbarState.isCode ? 'active' : '')}
-              title={`Insert code block (${SHORTCUTS.INSERT_CODE_BLOCK})`}
+              title={formatMessage(
+                {
+                  id: 'lexical.plugin.toolbar.format.code.title',
+                  defaultMessage: 'Insert code block ({shortcut})',
+                },
+                { shortcut: SHORTCUTS.INSERT_CODE_BLOCK }
+              )}
               type="button"
-              aria-label="Insert code block"
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.code.aria',
+                defaultMessage: 'Insert code block',
+              })}
             >
               <i className="format code" />
             </button>
@@ -868,7 +1025,10 @@ export default function ToolbarPlugin({
             disabled={!isEditable}
             buttonClassName="toolbar-item spaced"
             buttonLabel=""
-            buttonAriaLabel="Formatting options for additional text styles"
+            buttonAriaLabel={formatMessage({
+              id: 'lexical.plugin.toolbar.format.more.aria',
+              defaultMessage: 'Formatting options for additional text styles',
+            })}
             buttonIconClassName="icon dropdown-more"
           >
             <DropDownItem
@@ -876,12 +1036,23 @@ export default function ToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'lowercase');
               }}
               className={'item wide ' + dropDownActiveClass(toolbarState.isLowercase)}
-              title="Lowercase"
-              aria-label="Format text to lowercase"
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.format.lowercase.title',
+                defaultMessage: 'Lowercase',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.lowercase.aria',
+                defaultMessage: 'Format text to lowercase',
+              })}
             >
               <div className="icon-text-container">
                 <i className="icon lowercase" />
-                <span className="text">Lowercase</span>
+                <span className="text">
+                  {formatMessage({
+                    id: 'lexical.plugin.toolbar.format.lowercase.text',
+                    defaultMessage: 'Lowercase',
+                  })}
+                </span>
               </div>
               <span className="shortcut">{SHORTCUTS.LOWERCASE}</span>
             </DropDownItem>
@@ -890,12 +1061,23 @@ export default function ToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'uppercase');
               }}
               className={'item wide ' + dropDownActiveClass(toolbarState.isUppercase)}
-              title="Uppercase"
-              aria-label="Format text to uppercase"
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.format.uppercase.title',
+                defaultMessage: 'Uppercase',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.uppercase.aria',
+                defaultMessage: 'Format text to uppercase',
+              })}
             >
               <div className="icon-text-container">
                 <i className="icon uppercase" />
-                <span className="text">Uppercase</span>
+                <span className="text">
+                  {formatMessage({
+                    id: 'lexical.plugin.toolbar.format.uppercase.text',
+                    defaultMessage: 'Uppercase',
+                  })}
+                </span>
               </div>
               <span className="shortcut">{SHORTCUTS.UPPERCASE}</span>
             </DropDownItem>
@@ -904,12 +1086,23 @@ export default function ToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'capitalize');
               }}
               className={'item wide ' + dropDownActiveClass(toolbarState.isCapitalize)}
-              title="Capitalize"
-              aria-label="Format text to capitalize"
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.format.capitalize.title',
+                defaultMessage: 'Capitalize',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.capitalize.aria',
+                defaultMessage: 'Format text to capitalize',
+              })}
             >
               <div className="icon-text-container">
                 <i className="icon capitalize" />
-                <span className="text">Capitalize</span>
+                <span className="text">
+                  {formatMessage({
+                    id: 'lexical.plugin.toolbar.format.capitalize.text',
+                    defaultMessage: 'Capitalize',
+                  })}
+                </span>
               </div>
               <span className="shortcut">{SHORTCUTS.CAPITALIZE}</span>
             </DropDownItem>
@@ -918,12 +1111,23 @@ export default function ToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
               }}
               className={'item wide ' + dropDownActiveClass(toolbarState.isStrikethrough)}
-              title="Strikethrough"
-              aria-label="Format text with a strikethrough"
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.format.strikethrough.title',
+                defaultMessage: 'Strikethrough',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.strikethrough.aria',
+                defaultMessage: 'Format text with a strikethrough',
+              })}
             >
               <div className="icon-text-container">
                 <i className="icon strikethrough" />
-                <span className="text">Strikethrough</span>
+                <span className="text">
+                  {formatMessage({
+                    id: 'lexical.plugin.toolbar.format.strikethrough.text',
+                    defaultMessage: 'Strikethrough',
+                  })}
+                </span>
               </div>
               <span className="shortcut">{SHORTCUTS.STRIKETHROUGH}</span>
             </DropDownItem>
@@ -932,12 +1136,23 @@ export default function ToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
               }}
               className={'item wide ' + dropDownActiveClass(toolbarState.isSubscript)}
-              title="Subscript"
-              aria-label="Format text with a subscript"
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.format.subscript.title',
+                defaultMessage: 'Subscript',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.subscript.aria',
+                defaultMessage: 'Format text with a subscript',
+              })}
             >
               <div className="icon-text-container">
                 <i className="icon subscript" />
-                <span className="text">Subscript</span>
+                <span className="text">
+                  {formatMessage({
+                    id: 'lexical.plugin.toolbar.format.subscript.text',
+                    defaultMessage: 'Subscript',
+                  })}
+                </span>
               </div>
               <span className="shortcut">{SHORTCUTS.SUBSCRIPT}</span>
             </DropDownItem>
@@ -946,24 +1161,46 @@ export default function ToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
               }}
               className={'item wide ' + dropDownActiveClass(toolbarState.isSuperscript)}
-              title="Superscript"
-              aria-label="Format text with a superscript"
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.format.superscript.title',
+                defaultMessage: 'Superscript',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.superscript.aria',
+                defaultMessage: 'Format text with a superscript',
+              })}
             >
               <div className="icon-text-container">
                 <i className="icon superscript" />
-                <span className="text">Superscript</span>
+                <span className="text">
+                  {formatMessage({
+                    id: 'lexical.plugin.toolbar.format.superscript.text',
+                    defaultMessage: 'Superscript',
+                  })}
+                </span>
               </div>
               <span className="shortcut">{SHORTCUTS.SUPERSCRIPT}</span>
             </DropDownItem>
             <DropDownItem
               onClick={() => clearFormatting(activeEditor)}
               className="item wide"
-              title="Clear text formatting"
-              aria-label="Clear all text formatting"
+              title={formatMessage({
+                id: 'lexical.plugin.toolbar.format.clear.title',
+                defaultMessage: 'Clear text formatting',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.toolbar.format.clear.aria',
+                defaultMessage: 'Clear all text formatting',
+              })}
             >
               <div className="icon-text-container">
                 <i className="icon clear" />
-                <span className="text">Clear Formatting</span>
+                <span className="text">
+                  {formatMessage({
+                    id: 'lexical.plugin.toolbar.format.clear.text',
+                    defaultMessage: 'Clear Formatting',
+                  })}
+                </span>
               </div>
               <span className="shortcut">{SHORTCUTS.CLEAR_FORMATTING}</span>
             </DropDownItem>
@@ -975,18 +1212,33 @@ export default function ToolbarPlugin({
             disabled={!isEditable}
             onClick={insertLink}
             className={'toolbar-item spaced ' + (toolbarState.isLink ? 'active' : '')}
-            aria-label="Insert link"
-            title={`Insert link (${SHORTCUTS.INSERT_LINK})`}
+            aria-label={formatMessage({
+              id: 'lexical.plugin.toolbar.insert.link.aria',
+              defaultMessage: 'Insert link',
+            })}
+            title={formatMessage(
+              {
+                id: 'lexical.plugin.toolbar.insert.link.title',
+                defaultMessage: 'Insert link ({shortcut})',
+              },
+              { shortcut: SHORTCUTS.INSERT_LINK }
+            )}
             type="button"
           >
             <i className="format link" />
           </button>
           <button
             onClick={() => setIsStrapiImageDialogOpen(true)}
-            title={'Strapi Image'}
+            title={formatMessage({
+              id: 'lexical.plugin.toolbar.insert.strapiimage.title',
+              defaultMessage: 'Strapi Image',
+            })}
             type="button"
             className="toolbar-item"
-            aria-label="Insert Strapi Image"
+            aria-label={formatMessage({
+              id: 'lexical.plugin.toolbar.insert.strapiimage.aria',
+              defaultMessage: 'Insert Strapi Image',
+            })}
           >
             <i className="format image" />
           </button>
@@ -1005,8 +1257,14 @@ export default function ToolbarPlugin({
               <DropDown
                 disabled={!isEditable}
                 buttonClassName="toolbar-item spaced"
-                buttonLabel="Insert"
-                buttonAriaLabel="Insert specialized editor node"
+                buttonLabel={formatMessage({
+                  id: 'lexical.plugin.toolbar.insert.button.text',
+                  defaultMessage: 'Insert',
+                })}
+                buttonAriaLabel={formatMessage({
+                  id: 'lexical.plugin.toolbar.insert.button.aria',
+                  defaultMessage: 'Insert specialized editor node',
+                })}
                 buttonIconClassName="icon plus"
               >
                 <DropDownItem
@@ -1016,7 +1274,12 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon horizontal-rule" />
-                  <span className="text">Horizontal Rule</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.horizontalrule.text',
+                      defaultMessage: 'Horizontal Rule',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
@@ -1025,74 +1288,144 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon page-break" />
-                  <span className="text">Page Break</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.pagebreak.text',
+                      defaultMessage: 'Page Break',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
-                    showModal('Insert Image', (onClose) => (
-                      <InsertImageDialog activeEditor={activeEditor} onClose={onClose} />
-                    ));
+                    showModal(
+                      formatMessage({
+                        id: 'lexical.plugin.toolbar.insert.image.modal.title',
+                        defaultMessage: 'Insert Image',
+                      }),
+                      (onClose) => (
+                        <InsertImageDialog activeEditor={activeEditor} onClose={onClose} />
+                      )
+                    );
                   }}
                   className="item"
                 >
                   <i className="icon image" />
-                  <span className="text">Image</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.image.text',
+                      defaultMessage: 'Image',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
-                    showModal('Insert Inline Image', (onClose) => (
-                      <InsertInlineImageDialog activeEditor={activeEditor} onClose={onClose} />
-                    ));
+                    showModal(
+                      formatMessage({
+                        id: 'lexical.plugin.toolbar.insert.inlineimage.modal.title',
+                        defaultMessage: 'Insert Inline Image',
+                      }),
+                      (onClose) => (
+                        <InsertInlineImageDialog activeEditor={activeEditor} onClose={onClose} />
+                      )
+                    );
                   }}
                   className="item"
                 >
                   <i className="icon image" />
-                  <span className="text">Inline Image</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.inlineimage.text',
+                      defaultMessage: 'Inline Image',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
-                    showModal('Insert Table', (onClose) => (
-                      <InsertTableDialog activeEditor={activeEditor} onClose={onClose} />
-                    ));
+                    showModal(
+                      formatMessage({
+                        id: 'lexical.plugin.toolbar.insert.table.modal.title',
+                        defaultMessage: 'Insert Table',
+                      }),
+                      (onClose) => (
+                        <InsertTableDialog activeEditor={activeEditor} onClose={onClose} />
+                      )
+                    );
                   }}
                   className="item"
                 >
                   <i className="icon table" />
-                  <span className="text">Table</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.table.text',
+                      defaultMessage: 'Table',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
-                    showModal('Insert Poll', (onClose) => (
-                      <InsertPollDialog activeEditor={activeEditor} onClose={onClose} />
-                    ));
+                    showModal(
+                      formatMessage({
+                        id: 'lexical.plugin.toolbar.insert.poll.modal.title',
+                        defaultMessage: 'Insert Poll',
+                      }),
+                      (onClose) => (
+                        <InsertPollDialog activeEditor={activeEditor} onClose={onClose} />
+                      )
+                    );
                   }}
                   className="item"
                 >
                   <i className="icon poll" />
-                  <span className="text">Poll</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.poll.text',
+                      defaultMessage: 'Poll',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
-                    showModal('Insert Columns Layout', (onClose) => (
-                      <InsertLayoutDialog activeEditor={activeEditor} onClose={onClose} />
-                    ));
+                    showModal(
+                      formatMessage({
+                        id: 'lexical.plugin.toolbar.insert.columns.modal.title',
+                        defaultMessage: 'Insert Columns Layout',
+                      }),
+                      (onClose) => (
+                        <InsertLayoutDialog activeEditor={activeEditor} onClose={onClose} />
+                      )
+                    );
                   }}
                   className="item"
                 >
                   <i className="icon columns" />
-                  <span className="text">Columns Layout</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.columns.text',
+                      defaultMessage: 'Columns Layout',
+                    })}
+                  </span>
                 </DropDownItem>
-
                 <DropDownItem
                   onClick={() => {
-                    showModal('Insert Equation', (onClose) => (
-                      <InsertEquationDialog activeEditor={activeEditor} onClose={onClose} />
-                    ));
+                    showModal(
+                      formatMessage({
+                        id: 'lexical.plugin.toolbar.insert.equation.modal.title',
+                        defaultMessage: 'Insert Equation',
+                      }),
+                      (onClose) => (
+                        <InsertEquationDialog activeEditor={activeEditor} onClose={onClose} />
+                      )
+                    );
                   }}
                   className="item"
                 >
                   <i className="icon equation" />
-                  <span className="text">Equation</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.equation.text',
+                      defaultMessage: 'Equation',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
@@ -1105,7 +1438,12 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon sticky" />
-                  <span className="text">Sticky Note</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.stickynote.text',
+                      defaultMessage: 'Sticky Note',
+                    })}
+                  </span>
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
@@ -1114,7 +1452,12 @@ export default function ToolbarPlugin({
                   className="item"
                 >
                   <i className="icon caret-right" />
-                  <span className="text">Collapsible container</span>
+                  <span className="text">
+                    {formatMessage({
+                      id: 'lexical.plugin.toolbar.insert.collapsible.text',
+                      defaultMessage: 'Collapsible container',
+                    })}
+                  </span>
                 </DropDownItem>
                 {EmbedConfigs.map((embedConfig) => (
                   <DropDownItem

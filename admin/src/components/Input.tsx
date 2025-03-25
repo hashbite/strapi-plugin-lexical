@@ -3,22 +3,22 @@ import * as React from 'react';
 import { Field, Flex } from '@strapi/design-system';
 import { useFetchClient } from '@strapi/strapi/admin';
 import { debounce } from 'lodash';
-import { MessageDescriptor } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
 import { SerializedEditorState, SerializedElementNode, SerializedLexicalNode } from 'lexical';
 
 import LexicalEditor from '../lexical/Editor';
 import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
-import { TableContext } from '../lexical/plugins/TablePlugin';
 import { ToolbarContext } from '../lexical/context/ToolbarContext';
+import { TableContext } from '../lexical/plugins/TablePlugin';
 import PlaygroundEditorTheme from '../lexical/themes/PlaygroundEditorTheme';
 
 import Nodes from '../lexical/nodes';
 
+import { SerializedLinkNode } from '@lexical/link';
 import { InputProps } from '@strapi/strapi/admin';
 import { SerializedStrapiImageNode } from 'src/lexical/nodes/StrapiImageNode';
-import { SerializedLinkNode } from '@lexical/link';
 
 interface CustomFieldsComponentProps {
   attribute: {
@@ -42,11 +42,11 @@ interface Relation {
 const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & InputProps>(
   (props, ref) => {
     const { attribute, name, onChange, required, value, error, hint, labelAction, label } = props;
-
+    const { formatMessage } = useIntl();
     const { get } = useFetchClient();
 
     const handleChange = async (newValue: SerializedEditorState<SerializedLexicalNode>) => {
-      // Avoid unnessecary draft/modified status of entry
+      // Avoid unnecessary draft/modified status of entry
       if (JSON.stringify(value) === JSON.stringify(newValue)) {
         return;
       }
@@ -111,8 +111,13 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
             },
           });
         } catch (err) {
+          // @todo use strapi alert
           alert(
-            'Failed to locate media used in the rich text. This may be due to a permission issue. Please contact your administrator or developer for assistance.'
+            formatMessage({
+              id: 'lexical.components.input.alert.media-failure',
+              defaultMessage:
+                'Failed to locate media used in the rich text. This may be due to a permission issue. Please contact your administrator or developer for assistance.',
+            })
           );
           console.error(err);
         }
@@ -169,8 +174,13 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
           },
         });
       } catch (err) {
+        // @todo use strapi alert
         alert(
-          'Failed to locate linked collection entries in the rich text. This may be due to a permission issue. Please contact your administrator or developer for assistance.'
+          formatMessage({
+            id: 'lexical.components.input.alert.links-failure',
+            defaultMessage:
+              'Failed to locate linked collection entries in the rich text. This may be due to a permission issue. Please contact your administrator or developer for assistance.',
+          })
         );
         console.error(err);
       }

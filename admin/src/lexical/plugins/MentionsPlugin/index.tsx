@@ -17,7 +17,6 @@ import {
 } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import { TextNode } from 'lexical';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import { $createMentionNode } from '../../nodes/MentionNode';
@@ -86,6 +85,7 @@ const SUGGESTION_LIST_LENGTH_LIMIT = 5;
 
 const mentionsCache = new Map();
 
+// @todo move this dictionary to an external file
 const dummyMentionsData = [
   'Aayla Secura',
   'Adi Gallia',

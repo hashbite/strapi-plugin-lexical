@@ -47,13 +47,13 @@ import {
   isDOMNode,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import * as React from 'react';
 import { ReactPortal, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import invariant from '../../utils/invariant';
+import { useIntl } from 'react-intl';
 
 import useModal from '../../hooks/useModal';
 import ColorPicker from '../../ui/ColorPicker';
+import invariant from '../../utils/invariant';
 
 function computeSelectionCount(selection: TableSelection): {
   columns: number;
@@ -131,6 +131,7 @@ function TableActionMenu({
   cellMerge,
   showColorPickerModal,
 }: TableCellActionMenuProps) {
+  const { formatMessage } = useIntl();
   const [editor] = useLexicalComposerContext();
   const dropDownRef = useRef<HTMLDivElement | null>(null);
   const [tableCellNode, updateTableCellNode] = useState(_tableCellNode);
@@ -460,7 +461,12 @@ function TableActionMenu({
           onClick={() => mergeTableCellsAtSelection()}
           data-test-id="table-merge-cells"
         >
-          <span className="text">Merge cells</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.table.merge.cells',
+              defaultMessage: 'Merge cells',
+            })}
+          </span>
         </button>
       );
     } else if (canUnmergeCell) {
@@ -471,7 +477,12 @@ function TableActionMenu({
           onClick={() => unmergeTableCellsAtSelection()}
           data-test-id="table-unmerge-cells"
         >
-          <span className="text">Unmerge cells</span>
+          <span className="text">
+            {formatMessage({
+              id: 'lexical.plugin.table.unmerge.cells',
+              defaultMessage: 'Unmerge cells',
+            })}
+          </span>
         </button>
       );
     }
@@ -491,13 +502,22 @@ function TableActionMenu({
         type="button"
         className="item"
         onClick={() =>
-          showColorPickerModal('Cell background color', () => (
-            <ColorPicker color={backgroundColor} onChange={handleCellBackgroundColor} />
-          ))
+          showColorPickerModal(
+            formatMessage({
+              id: 'lexical.plugin.table.background.title',
+              defaultMessage: 'Cell background color',
+            }),
+            () => <ColorPicker color={backgroundColor} onChange={handleCellBackgroundColor} />
+          )
         }
         data-test-id="table-background-color"
       >
-        <span className="text">Background color</span>
+        <span className="text">
+          {formatMessage({
+            id: 'lexical.plugin.table.background.label',
+            defaultMessage: 'Background color',
+          })}
+        </span>
       </button>
       <button
         type="button"
@@ -505,7 +525,12 @@ function TableActionMenu({
         onClick={() => toggleRowStriping()}
         data-test-id="table-row-striping"
       >
-        <span className="text">Toggle Row Striping</span>
+        <span className="text">
+          {formatMessage({
+            id: 'lexical.plugin.table.striping.toggle',
+            defaultMessage: 'Toggle Row Striping',
+          })}
+        </span>
       </button>
       <hr />
       <button
@@ -515,7 +540,13 @@ function TableActionMenu({
         data-test-id="table-insert-row-above"
       >
         <span className="text">
-          Insert {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`} above
+          {formatMessage(
+            {
+              id: 'lexical.plugin.table.row.insert.above',
+              defaultMessage: 'Insert {count} {count, plural, one {row} other {rows}} above',
+            },
+            { count: selectionCounts.rows }
+          )}
         </span>
       </button>
       <button
@@ -525,7 +556,13 @@ function TableActionMenu({
         data-test-id="table-insert-row-below"
       >
         <span className="text">
-          Insert {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`} below
+          {formatMessage(
+            {
+              id: 'lexical.plugin.table.row.insert.below',
+              defaultMessage: 'Insert {count} {count, plural, one {row} other {rows}} below',
+            },
+            { count: selectionCounts.rows }
+          )}
         </span>
       </button>
       <hr />
@@ -536,8 +573,13 @@ function TableActionMenu({
         data-test-id="table-insert-column-before"
       >
         <span className="text">
-          Insert {selectionCounts.columns === 1 ? 'column' : `${selectionCounts.columns} columns`}{' '}
-          left
+          {formatMessage(
+            {
+              id: 'lexical.plugin.table.column.insert.left',
+              defaultMessage: 'Insert {count} {count, plural, one {column} other {columns}} left',
+            },
+            { count: selectionCounts.columns }
+          )}
         </span>
       </button>
       <button
@@ -547,8 +589,13 @@ function TableActionMenu({
         data-test-id="table-insert-column-after"
       >
         <span className="text">
-          Insert {selectionCounts.columns === 1 ? 'column' : `${selectionCounts.columns} columns`}{' '}
-          right
+          {formatMessage(
+            {
+              id: 'lexical.plugin.table.column.insert.right',
+              defaultMessage: 'Insert {count} {count, plural, one {column} other {columns}} right',
+            },
+            { count: selectionCounts.columns }
+          )}
         </span>
       </button>
       <hr />
@@ -558,7 +605,12 @@ function TableActionMenu({
         onClick={() => deleteTableColumnAtSelection()}
         data-test-id="table-delete-columns"
       >
-        <span className="text">Delete column</span>
+        <span className="text">
+          {formatMessage({
+            id: 'lexical.plugin.table.column.delete',
+            defaultMessage: 'Delete column',
+          })}
+        </span>
       </button>
       <button
         type="button"
@@ -566,7 +618,12 @@ function TableActionMenu({
         onClick={() => deleteTableRowAtSelection()}
         data-test-id="table-delete-rows"
       >
-        <span className="text">Delete row</span>
+        <span className="text">
+          {formatMessage({
+            id: 'lexical.plugin.table.row.delete',
+            defaultMessage: 'Delete row',
+          })}
+        </span>
       </button>
       <button
         type="button"
@@ -574,15 +631,32 @@ function TableActionMenu({
         onClick={() => deleteTableAtSelection()}
         data-test-id="table-delete"
       >
-        <span className="text">Delete table</span>
+        <span className="text">
+          {formatMessage({
+            id: 'lexical.plugin.table.delete',
+            defaultMessage: 'Delete table',
+          })}
+        </span>
       </button>
       <hr />
       <button type="button" className="item" onClick={() => toggleTableRowIsHeader()}>
         <span className="text">
-          {(tableCellNode.__headerState & TableCellHeaderStates.ROW) === TableCellHeaderStates.ROW
-            ? 'Remove'
-            : 'Add'}{' '}
-          row header
+          {formatMessage(
+            {
+              id: 'lexical.plugin.table.row.header',
+              defaultMessage: '{action} row header',
+            },
+            {
+              action:
+                (tableCellNode.__headerState & TableCellHeaderStates.ROW) ===
+                TableCellHeaderStates.ROW
+                  ? formatMessage({
+                      id: 'lexical.plugin.table.header.remove',
+                      defaultMessage: 'Remove',
+                    })
+                  : formatMessage({ id: 'lexical.plugin.table.header.add', defaultMessage: 'Add' }),
+            }
+          )}
         </span>
       </button>
       <button
@@ -592,11 +666,22 @@ function TableActionMenu({
         data-test-id="table-column-header"
       >
         <span className="text">
-          {(tableCellNode.__headerState & TableCellHeaderStates.COLUMN) ===
-          TableCellHeaderStates.COLUMN
-            ? 'Remove'
-            : 'Add'}{' '}
-          column header
+          {formatMessage(
+            {
+              id: 'lexical.plugin.table.column.header',
+              defaultMessage: '{action} column header',
+            },
+            {
+              action:
+                (tableCellNode.__headerState & TableCellHeaderStates.COLUMN) ===
+                TableCellHeaderStates.COLUMN
+                  ? formatMessage({
+                      id: 'lexical.plugin.table.header.remove',
+                      defaultMessage: 'Remove',
+                    })
+                  : formatMessage({ id: 'lexical.plugin.table.header.add', defaultMessage: 'Add' }),
+            }
+          )}
         </span>
       </button>
     </div>,

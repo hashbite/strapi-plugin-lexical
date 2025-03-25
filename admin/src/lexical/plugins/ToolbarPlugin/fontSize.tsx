@@ -10,6 +10,7 @@ import './fontSize.css';
 
 import { LexicalEditor } from 'lexical';
 import * as React from 'react';
+import { useIntl } from 'react-intl';
 
 import { MAX_ALLOWED_FONT_SIZE, MIN_ALLOWED_FONT_SIZE } from '../../context/ToolbarContext';
 import { SHORTCUTS } from '../ShortcutsPlugin/shortcuts';
@@ -35,6 +36,7 @@ export default function FontSize({
   disabled: boolean;
   editor: LexicalEditor;
 }) {
+  const { formatMessage } = useIntl();
   const [inputValue, setInputValue] = React.useState<string>(selectionFontSize);
   const [inputChangeFlag, setInputChangeFlag] = React.useState<boolean>(false);
 
@@ -90,15 +92,27 @@ export default function FontSize({
         }
         onClick={() => updateFontSize(editor, UpdateFontSizeType.decrement, inputValue)}
         className="toolbar-item font-decrement"
-        aria-label="Decrease font size"
-        title={`Decrease font size (${SHORTCUTS.DECREASE_FONT_SIZE})`}
+        aria-label={formatMessage({
+          id: 'lexical.plugin.font-size.decrease.aria',
+          defaultMessage: 'Decrease font size',
+        })}
+        title={formatMessage(
+          {
+            id: 'lexical.plugin.font-size.decrease.title',
+            defaultMessage: 'Decrease font size ({shortcut})',
+          },
+          { shortcut: SHORTCUTS.DECREASE_FONT_SIZE }
+        )}
       >
         <i className="format minus-icon" />
       </button>
 
       <input
         type="number"
-        title="Font size"
+        title={formatMessage({
+          id: 'lexical.plugin.font-size.input.title',
+          defaultMessage: 'Font size',
+        })}
         value={inputValue}
         disabled={disabled}
         className="toolbar-item font-size-input"
@@ -116,8 +130,17 @@ export default function FontSize({
         }
         onClick={() => updateFontSize(editor, UpdateFontSizeType.increment, inputValue)}
         className="toolbar-item font-increment"
-        aria-label="Increase font size"
-        title={`Increase font size (${SHORTCUTS.INCREASE_FONT_SIZE})`}
+        aria-label={formatMessage({
+          id: 'lexical.plugin.font-size.increase.aria',
+          defaultMessage: 'Increase font size',
+        })}
+        title={formatMessage(
+          {
+            id: 'lexical.plugin.font-size.increase.title',
+            defaultMessage: 'Increase font size ({shortcut})',
+          },
+          { shortcut: SHORTCUTS.INCREASE_FONT_SIZE }
+        )}
       >
         <i className="format add-icon" />
       </button>

@@ -16,7 +16,7 @@ export function useDebounce<T extends (...args: never[]) => void>(
   const funcRef = useRef<T | null>(null);
   funcRef.current = fn;
 
-  return useMemo(
+  const debounceFn = useMemo(
     () =>
       debounce(
         (...args: Parameters<T>) => {
@@ -29,4 +29,12 @@ export function useDebounce<T extends (...args: never[]) => void>(
       ),
     [ms, maxWait]
   );
+
+   useEffect(() => {
+    return () => {
+      debouncedFn.cancel();
+    };
+  }, [debouncedFn]);
+
+  return debouncedFn;
 }

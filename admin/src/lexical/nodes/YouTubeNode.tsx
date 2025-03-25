@@ -24,7 +24,7 @@ import {
   DecoratorBlockNode,
   SerializedDecoratorBlockNode,
 } from '@lexical/react/LexicalDecoratorBlockNode';
-import * as React from 'react';
+import { useIntl } from 'react-intl';
 
 type YouTubeComponentProps = Readonly<{
   className: Readonly<{
@@ -37,8 +37,10 @@ type YouTubeComponentProps = Readonly<{
 }>;
 
 function YouTubeComponent({ className, format, nodeKey, videoID }: YouTubeComponentProps) {
+  const { formatMessage } = useIntl();
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
+      {/* @todo: use youtube-lite instead */}
       <iframe
         width="560"
         height="315"
@@ -46,7 +48,10 @@ function YouTubeComponent({ className, format, nodeKey, videoID }: YouTubeCompon
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen={true}
-        title="YouTube video"
+        title={formatMessage({
+          id: 'lexical.nodes.youtube.iframe.title',
+          defaultMessage: 'YouTube video',
+        })}
       />
     </BlockWithAlignableContents>
   );
@@ -107,6 +112,7 @@ export class YouTubeNode extends DecoratorBlockNode {
       'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
     );
     element.setAttribute('allowfullscreen', 'true');
+    // @todo how to localize
     element.setAttribute('title', 'YouTube video');
     return { element };
   }

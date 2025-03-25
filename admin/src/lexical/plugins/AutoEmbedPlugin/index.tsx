@@ -18,7 +18,6 @@ import {
 } from '@lexical/react/LexicalAutoEmbedPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMemo, useState } from 'react';
-import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import useModal from '../../hooks/useModal';
@@ -27,6 +26,8 @@ import { DialogActions } from '../../ui/Dialog';
 import { INSERT_FIGMA_COMMAND } from '../FigmaPlugin';
 import { INSERT_TWEET_COMMAND } from '../TwitterPlugin';
 import { INSERT_YOUTUBE_COMMAND } from '../YouTubePlugin';
+
+import { useIntl } from 'react-intl';
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.
@@ -225,6 +226,7 @@ export function AutoEmbedDialog({
   embedConfig: PlaygroundEmbedConfig;
   onClose: () => void;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const [text, setText] = useState('');
   const [editor] = useLexicalComposerContext();
   const [embedResult, setEmbedResult] = useState<EmbedMatchResult | null>(null);
@@ -273,7 +275,7 @@ export function AutoEmbedDialog({
           onClick={onClick}
           data-test-id={`${embedConfig.type}-embed-modal-submit-btn`}
         >
-          Embed
+          {formatMessage({ id: 'lexical.plugin.embed.button.embed', defaultMessage: 'Embed' })}
         </Button>
       </DialogActions>
     </div>
@@ -282,11 +284,16 @@ export function AutoEmbedDialog({
 
 export default function AutoEmbedPlugin(): JSX.Element {
   const [modal, showModal] = useModal();
+  const { formatMessage } = useIntl();
 
   const openEmbedModal = (embedConfig: PlaygroundEmbedConfig) => {
-    showModal(`Embed ${embedConfig.contentName}`, (onClose) => (
-      <AutoEmbedDialog embedConfig={embedConfig} onClose={onClose} />
-    ));
+    showModal(
+      formatMessage(
+        { id: 'lexical.plugin.embed.modal.title', defaultMessage: 'Embed {contentType}' },
+        { contentType: embedConfig.contentName }
+      ),
+      (onClose) => <AutoEmbedDialog embedConfig={embedConfig} onClose={onClose} />
+    );
   };
 
   const getMenuOptions = (
@@ -295,12 +302,17 @@ export default function AutoEmbedPlugin(): JSX.Element {
     dismissFn: () => void
   ) => {
     return [
-      new AutoEmbedOption('Dismiss', {
-        onSelect: dismissFn,
-      }),
-      new AutoEmbedOption(`Embed ${activeEmbedConfig.contentName}`, {
-        onSelect: embedFn,
-      }),
+      new AutoEmbedOption(
+        formatMessage({ id: 'lexical.plugin.embed.menu.dismiss', defaultMessage: 'Dismiss' }),
+        { onSelect: dismissFn }
+      ),
+      new AutoEmbedOption(
+        formatMessage(
+          { id: 'lexical.plugin.embed.menu.embed', defaultMessage: 'Embed {contentType}' },
+          { contentType: activeEmbedConfig.contentName }
+        ),
+        { onSelect: embedFn }
+      ),
     ];
   };
 

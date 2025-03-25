@@ -17,11 +17,11 @@ export default {
       pluginId: 'lexical',
       type: 'json',
       intlLabel: {
-        id: 'lexical.lexical.label',
+        id: 'lexical.plugin.label',
         defaultMessage: 'Lexical Editor',
       },
       intlDescription: {
-        id: 'lexical.lexical.description',
+        id: 'lexical.plugin.description',
         defaultMessage: 'Lexical advanced WYSIWYG editor',
       },
       icon: LexicalIcon,

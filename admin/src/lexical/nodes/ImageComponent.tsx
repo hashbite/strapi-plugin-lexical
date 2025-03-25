@@ -44,8 +44,8 @@ import {
   SELECTION_CHANGE_COMMAND,
   TextNode,
 } from 'lexical';
-import * as React from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 import { useSharedHistoryContext } from '../context/SharedHistoryContext';
 import brokenImage from '../images/image-broken.svg';
@@ -156,6 +156,8 @@ export default function ImageComponent({
   width: 'inherit' | number;
   captionsEnabled: boolean;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
+
   const imageRef = useRef<null | HTMLImageElement>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
@@ -405,7 +407,10 @@ export default function ImageComponent({
               <RichTextPlugin
                 contentEditable={
                   <ContentEditable
-                    placeholder="Enter a caption..."
+                    placeholder={formatMessage({
+                      id: 'lexical.nodes.image-component.caption.placeholder',
+                      defaultMessage: 'Enter a caption...',
+                    })}
                     placeholderClassName="ImageNode__placeholder"
                     className="ImageNode__contentEditable"
                   />

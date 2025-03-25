@@ -7,6 +7,7 @@
  */
 
 import type { JSX } from 'react';
+import { useIntl } from 'react-intl';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { INSERT_TABLE_COMMAND, TableCellNode, TableNode, TableRowNode } from '@lexical/table';
@@ -82,6 +83,7 @@ export function InsertTableDialog({
   activeEditor: LexicalEditor;
   onClose: () => void;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   const [rows, setRows] = useState('5');
   const [columns, setColumns] = useState('5');
   const [isDisabled, setIsDisabled] = useState(true);
@@ -108,16 +110,28 @@ export function InsertTableDialog({
   return (
     <>
       <TextInput
-        placeholder={'# of rows (1-500)'}
-        label="Rows"
+        placeholder={formatMessage({
+          id: 'lexical.plugin.table.rows.placeholder',
+          defaultMessage: '# of rows (1-500)',
+        })}
+        label={formatMessage({
+          id: 'lexical.plugin.table.rows.label',
+          defaultMessage: 'Rows',
+        })}
         onChange={setRows}
         value={rows}
         data-test-id="table-modal-rows"
         type="number"
       />
       <TextInput
-        placeholder={'# of columns (1-50)'}
-        label="Columns"
+        placeholder={formatMessage({
+          id: 'lexical.plugin.table.columns.placeholder',
+          defaultMessage: '# of columns (1-50)',
+        })}
+        label={formatMessage({
+          id: 'lexical.plugin.table.columns.label',
+          defaultMessage: 'Columns',
+        })}
         onChange={setColumns}
         value={columns}
         data-test-id="table-modal-columns"
@@ -125,7 +139,10 @@ export function InsertTableDialog({
       />
       <DialogActions data-test-id="table-model-confirm-insert">
         <Button disabled={isDisabled} onClick={onClick}>
-          Confirm
+          {formatMessage({
+            id: 'lexical.plugin.table.confirm.button',
+            defaultMessage: 'Confirm',
+          })}
         </Button>
       </DialogActions>
     </>

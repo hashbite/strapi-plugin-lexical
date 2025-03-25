@@ -2,16 +2,16 @@ import * as React from 'react';
 import { useIntl } from 'react-intl';
 
 import {
+  Box,
+  Button,
   Field,
   Modal,
-  Button,
-  Tabs,
-  Box,
+  Radio,
   Table,
+  Tabs,
   Tbody,
   Td,
   Tr,
-  Radio,
   Typography,
 } from '@strapi/design-system';
 
@@ -51,7 +51,7 @@ const LinkModal = ({
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { locale } = useIntl();
+  const { locale, formatMessage } = useIntl();
   const { get } = useFetchClient();
   const { model } = useContentManagerContext();
 
@@ -153,21 +153,53 @@ const LinkModal = ({
       <Modal.Content>
         <form onSubmit={onSubmitCb}>
           <Modal.Header>
-            <Modal.Title>Link Content</Modal.Title>
+            <Modal.Title>
+              {formatMessage({
+                id: 'lexical.components.link-modal.title',
+                defaultMessage: 'Link Content',
+              })}
+            </Modal.Title>
           </Modal.Header>
           <Tabs.Root defaultValue={defaultTab} onValueChange={setActiveTab}>
-            <Tabs.List aria-label="Do you want to link internal or external content?">
-              <Tabs.Trigger value="internal">Internal Link</Tabs.Trigger>
-              <Tabs.Trigger value="external">External Link</Tabs.Trigger>
+            <Tabs.List
+              aria-label={formatMessage({
+                id: 'lexical.components.link-modal.tab-list.aria-label',
+                defaultMessage: 'Do you want to link internal or external content?',
+              })}
+            >
+              <Tabs.Trigger value="internal">
+                {formatMessage({
+                  id: 'lexical.components.link-modal.tabs.title.internal-link',
+                  defaultMessage: 'Internal Link',
+                })}
+              </Tabs.Trigger>
+              <Tabs.Trigger value="external">
+                {formatMessage({
+                  id: 'lexical.components.link-modal.tabs.title.external-link',
+                  defaultMessage: 'External Link',
+                })}
+              </Tabs.Trigger>
             </Tabs.List>
             <Tabs.Content value="internal">
               <Box padding={4} style={{ minHeight: '60vh', overflowY: 'scroll' }}>
                 <Field.Root error={internalError} onChange={handleSearch} required>
-                  <Field.Label>Search for content within Strapi to link to</Field.Label>
-                  <Field.Input type="search" placeholder="Search..." size="M" />
+                  <Field.Label>
+                    {formatMessage({
+                      id: 'lexical.components.link-modal.tabs.content.internal.label',
+                      defaultMessage: 'Search for content within Strapi to link to',
+                    })}
+                  </Field.Label>
+                  <Field.Input
+                    type="search"
+                    placeholder={formatMessage({
+                      id: 'lexical.components.link-modal.tabs.content.internal.placeholder',
+                      defaultMessage: 'Search...',
+                    })}
+                    size="M"
+                  />
                   <Field.Error />
                 </Field.Root>
-                {searchResults && (
+                {searchResults.length > 0 && (
                   <Radio.Group
                     name="internal"
                     defaultValue={currentType === 'internal' ? currentValue : undefined}
@@ -201,9 +233,17 @@ const LinkModal = ({
             <Tabs.Content value="external">
               <Box padding={4} style={{ minHeight: '60vh', overflowY: 'scroll' }}>
                 <Field.Root error={externalError} name="external" required>
-                  <Field.Label>Enter URI to external content</Field.Label>
+                  <Field.Label>
+                    {formatMessage({
+                      id: 'lexical.components.link-modal.tabs.content.external.label',
+                      defaultMessage: 'Enter URI to external content',
+                    })}
+                  </Field.Label>
                   <Field.Input
-                    placeholder="Enter external URL..."
+                    placeholder={formatMessage({
+                      id: 'lexical.components.link-modal.tabs.content.external.placeholder',
+                      defaultMessage: 'Enter external URL...',
+                    })}
                     size="M"
                     type="url"
                     defaultValue={currentType === 'external' ? currentValue : ''}
@@ -216,10 +256,18 @@ const LinkModal = ({
           <Modal.Footer>
             <Modal.Close>
               <Button variant="tertiary" onClick={() => setOpen(false)}>
-                Cancel
+                {formatMessage({
+                  id: 'lexical.components.link-modal.button.cancel',
+                  defaultMessage: 'Cancel',
+                })}
               </Button>
             </Modal.Close>
-            <Button type="submit">Set Link</Button>
+            <Button type="submit">
+              {formatMessage({
+                id: 'lexical.components.link-modal.button.set-link',
+                defaultMessage: 'Set Link',
+              })}
+            </Button>
           </Modal.Footer>
         </form>
       </Modal.Content>
