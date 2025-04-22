@@ -101,7 +101,7 @@ const WordCountPlugin: React.FC<WordCountPluginProps> = ({ limit, charset = 'UTF
           })}
         />
       ) : (
-        <span>
+        <span className="word-count__text">
           {formatMessage(
             {
               id: 'lexical.plugin.word-count.characters.count',
@@ -111,7 +111,7 @@ const WordCountPlugin: React.FC<WordCountPluginProps> = ({ limit, charset = 'UTF
           )}
         </span>
       )}
-      <span>
+      <span className="word-count__text">
         {formatMessage(
           { id: 'lexical.plugin.word-count.words.count', defaultMessage: '{count} words' },
           { count: wordCount }

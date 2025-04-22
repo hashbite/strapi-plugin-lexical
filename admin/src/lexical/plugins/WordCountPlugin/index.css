@@ -7,3 +7,8 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.word-count__text {
+  font-size: 1.2rem;
+  color: #6b7280;
+}

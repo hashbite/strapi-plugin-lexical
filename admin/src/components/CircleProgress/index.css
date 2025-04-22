@@ -14,7 +14,7 @@
 }
 
 .circle-progress__fg {
-  stroke: #3b82f6;
+  stroke: rgb(73, 69, 255);
 }
 
 .circle-progress__text {
@@ -33,6 +33,6 @@
 }
 
 .circle-progress__label {
-  font-size: 0.875rem;
+  font-size: 1.2rem;
   color: #6b7280;
 }
