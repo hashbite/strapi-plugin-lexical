@@ -1,0 +1,38 @@
+.circle-progress {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.circle-progress__svg {
+  transform: rotate(-90deg);
+}
+
+.circle-progress__bg {
+  stroke: #e5e7eb;
+}
+
+.circle-progress__fg {
+  stroke: rgb(73, 69, 255);
+}
+
+.circle-progress__text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.circle-progress__count {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.circle-progress__label {
+  font-size: 1.2rem;
+  color: #6b7280;
+}

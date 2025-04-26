@@ -1,0 +1,14 @@
+.word-count-plugin {
+  display: flex;
+  gap: 2rem;
+  justify-content: end;
+  align-items: center;
+
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.word-count__text {
+  font-size: 1.2rem;
+  color: #6b7280;
+}

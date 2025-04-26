@@ -7,6 +7,8 @@
  */
 
 import type { JSX } from 'react';
+import { useIntl } from 'react-intl';
+
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin';
@@ -26,7 +28,6 @@ import { TabIndentationPlugin } from '@lexical/react/LexicalTabIndentationPlugin
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
 import { useEffect, useState } from 'react';
-import { CAN_USE_DOM } from './utils/environment';
 
 import { EditorState, SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { useSharedHistoryContext } from './context/SharedHistoryContext';
@@ -60,6 +61,7 @@ import PollPlugin from './plugins/PollPlugin';
 import ShortcutsPlugin from './plugins/ShortcutsPlugin';
 import SpecialTextPlugin from './plugins/SpecialTextPlugin';
 import SpeechToTextPlugin from './plugins/SpeechToTextPlugin';
+import StrapiImagePlugin from './plugins/StrapiImagePlugin';
 import StrapiOnChangePlugin from './plugins/StrapiOnChangePlugin';
 import TabFocusPlugin from './plugins/TabFocusPlugin';
 import TableCellActionMenuPlugin from './plugins/TableActionMenuPlugin';
@@ -69,12 +71,14 @@ import TableOfContentsPlugin from './plugins/TableOfContentsPlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import TreeViewPlugin from './plugins/TreeViewPlugin';
 import TwitterPlugin from './plugins/TwitterPlugin';
+import WordCountPlugin from './plugins/WordCountPlugin';
 import YouTubePlugin from './plugins/YouTubePlugin';
 import ContentEditable from './ui/ContentEditable';
+import { CAN_USE_DOM } from './utils/environment';
 
-import { useIntl } from 'react-intl';
-import StrapiImagePlugin from './plugins/StrapiImagePlugin';
 import './styles.css';
+
+const CHARACTER_LIMIT = 1500;
 
 interface LexicalEditorProps {
   onChange: (newValue: SerializedEditorState<SerializedLexicalNode>) => void;
@@ -246,8 +250,12 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
             <HistoryPlugin externalHistoryState={historyState} />
           </>
         )}
+        {/* @todo: maxLength should be a setting */}
         {(isCharLimit || isCharLimitUtf8) && (
-          <CharacterLimitPlugin charset={isCharLimit ? 'UTF-16' : 'UTF-8'} maxLength={5} />
+          <CharacterLimitPlugin
+            charset={isCharLimit ? 'UTF-16' : 'UTF-8'}
+            maxLength={CHARACTER_LIMIT}
+          />
         )}
         {isAutocomplete && <AutocompletePlugin />}
         <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
@@ -258,6 +266,7 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
           shouldPreserveNewLinesInMarkdown={shouldPreserveNewLinesInMarkdown}
         />
       </div>
+      <WordCountPlugin limit={CHARACTER_LIMIT} charset={isCharLimit ? 'UTF-16' : 'UTF-8'} />
       {showTreeView && <TreeViewPlugin />}
       <StrapiOnChangePlugin onChange={onChange} expectedEditorState={props.expectedEditorState} />
       <StrapiImagePlugin />
