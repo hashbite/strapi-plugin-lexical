@@ -11,6 +11,10 @@ import { SerializedEditorState, SerializedElementNode, SerializedLexicalNode } f
 import LexicalEditor from '../lexical/Editor';
 import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
 import { ToolbarContext } from '../lexical/context/ToolbarContext';
+import {
+  StrapiFieldConfig,
+  StrapiFieldConfigProvider,
+} from '../lexical/context/StrapiFieldContext';
 import { TableContext } from '../lexical/plugins/TablePlugin';
 import PlaygroundEditorTheme from '../lexical/themes/PlaygroundEditorTheme';
 
@@ -26,6 +30,7 @@ interface CustomFieldsComponentProps {
   attribute: {
     type: string;
     customField: string;
+    options: StrapiFieldConfig;
   };
   description: MessageDescriptor;
   placeholder: MessageDescriptor;
@@ -245,14 +250,16 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
             <FlashMessageContext>
               <LexicalComposer initialConfig={initialConfig}>
                 <TableContext>
-                  <ToolbarContext>
-                    <LexicalEditor
-                      onChange={handleChangeCb}
-                      ref={ref}
-                      fieldName={name}
-                      expectedEditorState={expectedEditorState}
-                    />
-                  </ToolbarContext>
+                  <StrapiFieldConfigProvider value={attribute.options}>
+                    <ToolbarContext>
+                      <LexicalEditor
+                        onChange={handleChangeCb}
+                        ref={ref}
+                        fieldName={name}
+                        expectedEditorState={expectedEditorState}
+                      />
+                    </ToolbarContext>
+                  </StrapiFieldConfigProvider>
                 </TableContext>
               </LexicalComposer>
             </FlashMessageContext>

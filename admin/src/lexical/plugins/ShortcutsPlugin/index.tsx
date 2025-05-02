@@ -22,7 +22,6 @@ import { Dispatch, useEffect } from 'react';
 import { useToolbarState } from '../../context/ToolbarContext';
 import { sanitizeUrl } from '../../utils/url';
 import {
-  clearFormatting,
   formatBulletList,
   formatCheckList,
   formatCode,
@@ -59,6 +58,7 @@ import {
   isSuperscript,
   isUppercase,
 } from './shortcuts';
+import { clearFormatting } from '../ToolbarPlugin/codeLessUtils';
 
 export default function ShortcutsPlugin({
   editor,

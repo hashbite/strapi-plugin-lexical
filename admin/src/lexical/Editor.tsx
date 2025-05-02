@@ -74,13 +74,20 @@ import ContentEditable from './ui/ContentEditable';
 import { useIntl } from 'react-intl';
 import StrapiImagePlugin from './plugins/StrapiImagePlugin';
 import './styles.css';
+import { SupportedNodeTypePlugins } from '../supportedNodeTypes';
 
-interface LexicalEditorProps {
+export interface LexicalEditorProps {
   onChange: (newValue: SerializedEditorState<SerializedLexicalNode>) => void;
   ref: React.ForwardedRef<HTMLDivElement>;
   fieldName: string;
   expectedEditorState?: SerializedEditorState<SerializedLexicalNode>;
 }
+
+type RenderPluginProps = {
+  lexicalEditorProps: LexicalEditorProps;
+  onRef: (_floatingAnchorElem: HTMLDivElement) => void;
+  placeholder: string;
+};
 
 export default function Editor(props: LexicalEditorProps): JSX.Element {
   const { formatMessage } = useIntl();
@@ -171,7 +178,6 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
         {selectionAlwaysOnDisplay && <SelectionAlwaysOnDisplay />}
         <ClearEditorPlugin />
         <ComponentPickerPlugin />
-        <EmojiPickerPlugin />
         <AutoEmbedPlugin />
         <MentionsPlugin />
         <EmojisPlugin />
@@ -181,15 +187,10 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
         {isRichText ? (
           <>
             <HistoryPlugin externalHistoryState={historyState} />
-            <RichTextPlugin
-              contentEditable={
-                <div className="editor-scroller">
-                  <div className="editor" ref={onRef}>
-                    <ContentEditable placeholder={placeholder} ref={props.ref} />
-                  </div>
-                </div>
-              }
-              ErrorBoundary={LexicalErrorBoundary}
+            <SupportedNodeTypePlugins
+              lexicalEditorProps={props}
+              onRef={onRef}
+              placeholder={placeholder}
             />
             <MarkdownShortcutPlugin />
             <CodeHighlightPlugin />
@@ -203,7 +204,7 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
             <TableCellResizer />
             <ImagesPlugin />
             <InlineImagePlugin />
-            <LinkPlugin hasLinkAttributes={hasLinkAttributes} />
+
             <PollPlugin />
             <TwitterPlugin />
             <YouTubePlugin />

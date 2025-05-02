@@ -29,6 +29,7 @@
     - [v1 - Stable](#v1---stable)
   - [Contributing](#contributing)
   - [Resources](#resources)
+    - [🛠️ Sponsored by hashbite.net | support \& custom development available](#️-sponsored-by-hashbitenet--support--custom-development-available)
 
 <!-- /TOC -->
 
@@ -38,53 +39,52 @@
 
 1. Install the plugin:
 
-   ```bash
-   npm install strapi-plugin-lexical
-   ```
+    ```bash
+    npm install strapi-plugin-lexical
+    ```
 
 2. Enable the plugin:
 
-   ```javascript
-   // ./config/plugins.js
-   {
-    lexical: {
-      enabled: true,
-    },
-
-  };
+    ```javascript
+    // ./config/plugins.js
+    {
+      lexical: {
+        enabled: true,
+      },
+    };
     ```
 
 3. Include the required CSS and Prism.js in your Strapi admin:
 
-   ```javascript
-   // ./src/admin/app.js
-   import "strapi-plugin-lexical/dist/style.css";
-   import "prismjs";
-   ```
+    ```javascript
+    // ./src/admin/app.js
+    import "strapi-plugin-lexical/style.css";
+    import "prismjs";
+    ```
 
 4. Add Vite support for Prism.js:
-   - Install the plugin:
+    - Install the plugin:
 
-     ```bash
-     npm install --save-dev vite-plugin-prismjs
-     ```
+      ```bash
+      npm install --save-dev vite-plugin-prismjs
+      ```
 
-   - Update your Vite configuration:
+    - Update your Vite configuration:
 
-     ```javascript
-     // ./src/admin/vite.config.js
-     import { mergeConfig } from "vite";
-     import prismjs from "vite-plugin-prismjs";
+      ```javascript
+      // ./src/admin/vite.config.js
+      import { mergeConfig } from "vite";
+      import prismjs from "vite-plugin-prismjs";
 
-     export default (config) =>
-       mergeConfig(config, {
-         plugins: [
-           prismjs({
-             languages: "all", // Load all languages or customize as needed
-           }),
-         ],
-       });
-     ```
+      export default (config) =>
+        mergeConfig(config, {
+          plugins: [
+            prismjs({
+              languages: "all", // Load all languages or customize as needed
+            }),
+          ],
+        });
+      ```
 
     > **Note:** Prism.js is required even if you don't plan to support code blocks. If you find a workaround to avoid this, please share it with us via a pull request or issue. We happily skip this installation step if we can!
 
