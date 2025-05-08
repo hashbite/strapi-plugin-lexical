@@ -26,7 +26,7 @@ export const useStrapiFieldContext = () => {
   const context = useContext(StrapiFieldConfigContext);
 
   if (context === undefined) {
-    throw new Error('useStrapiFieldContext must be used within a ToolbarProvider');
+    throw new Error('useStrapiFieldContext must be used within a StrapiFieldConfigProvider');
   }
 
   return context;
