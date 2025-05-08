@@ -31,7 +31,7 @@ export function HorizontalRule({ activeEditor, toolbarState, isEditable }: Toolb
       }}
       className="item"
     >
-      <i className="icon horizonta l-rule" />
+      <i className="icon horizontal-rule" />
       <span className="text">
         {formatMessage({
           id: 'lexical.plugin.toolbar.insert.horizontalrule.text',
