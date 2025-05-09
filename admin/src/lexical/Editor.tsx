@@ -75,6 +75,7 @@ import { useIntl } from 'react-intl';
 import StrapiImagePlugin from './plugins/StrapiImagePlugin';
 import './styles.css';
 import { SupportedNodeTypePlugins } from '../supportedNodeTypes';
+import { useStrapiFieldContext } from './context/StrapiFieldContext';
 
 export interface LexicalEditorProps {
   onChange: (newValue: SerializedEditorState<SerializedLexicalNode>) => void;
@@ -92,6 +93,7 @@ type RenderPluginProps = {
 export default function Editor(props: LexicalEditorProps): JSX.Element {
   const { formatMessage } = useIntl();
   const { historyState } = useSharedHistoryContext();
+  const strapiFieldConfig = useStrapiFieldContext();
 
   const isCollab = false;
   const isAutocomplete = false;
@@ -100,7 +102,7 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
   const hasLinkAttributes = false;
   const isCharLimitUtf8 = false;
   const isRichText = true;
-  const showTreeView = false;
+  const showTreeView = strapiFieldConfig?.developers?.treeView;
   const showTableOfContents = false;
   const shouldUseLexicalContextMenu = false;
   const shouldPreserveNewLinesInMarkdown = false;
