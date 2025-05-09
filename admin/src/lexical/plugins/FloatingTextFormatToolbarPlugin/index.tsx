@@ -32,6 +32,7 @@ import { useIntl } from 'react-intl';
 import { getDOMRangeRect } from '../../utils/getDOMRangeRect';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { setFloatingElemPosition } from '../../utils/setFloatingElemPosition';
+import { useStrapiFieldContext } from '../../context/StrapiFieldContext';
 
 function TextFormatFloatingToolbar({
   editor,
@@ -179,195 +180,219 @@ function TextFormatFloatingToolbar({
     );
   }, [editor, $updateTextFormatFloatingToolbar]);
 
+  const strapiFieldConfig = useStrapiFieldContext();
+
   return (
     <div ref={popupCharStylesEditorRef} className="floating-text-format-popup">
       {editor.isEditable() && (
         <>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
-            }}
-            className={'popup-item spaced ' + (isBold ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.bold.title',
-              defaultMessage: 'Bold',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.bold.aria',
-              defaultMessage: 'Format text as bold',
-            })}
-          >
-            <i className="format bold" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
-            }}
-            className={'popup-item spaced ' + (isItalic ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.italic.title',
-              defaultMessage: 'Italic',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.italic.aria',
-              defaultMessage: 'Format text as italics',
-            })}
-          >
-            <i className="format italic" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
-            }}
-            className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.underline.title',
-              defaultMessage: 'Underline',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.underline.aria',
-              defaultMessage: 'Format text to underlined',
-            })}
-          >
-            <i className="format underline" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
-            }}
-            className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.strikethrough.title',
-              defaultMessage: 'Strikethrough',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.strikethrough.aria',
-              defaultMessage: 'Format text with a strikethrough',
-            })}
-          >
-            <i className="format strikethrough" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
-            }}
-            className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.subscript.title',
-              defaultMessage: 'Subscript',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.subscript.aria',
-              defaultMessage: 'Format Subscript',
-            })}
-          >
-            <i className="format subscript" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
-            }}
-            className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.superscript.title',
-              defaultMessage: 'Superscript',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.superscript.aria',
-              defaultMessage: 'Format Superscript',
-            })}
-          >
-            <i className="format superscript" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'uppercase');
-            }}
-            className={'popup-item spaced ' + (isUppercase ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.uppercase.title',
-              defaultMessage: 'Uppercase',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.uppercase.aria',
-              defaultMessage: 'Format text to uppercase',
-            })}
-          >
-            <i className="format uppercase" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'lowercase');
-            }}
-            className={'popup-item spaced ' + (isLowercase ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.lowercase.title',
-              defaultMessage: 'Lowercase',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.lowercase.aria',
-              defaultMessage: 'Format text to lowercase',
-            })}
-          >
-            <i className="format lowercase" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'capitalize');
-            }}
-            className={'popup-item spaced ' + (isCapitalize ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.capitalize.title',
-              defaultMessage: 'Capitalize',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.capitalize.aria',
-              defaultMessage: 'Format text to capitalize',
-            })}
-          >
-            <i className="format capitalize" />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-            }}
-            className={'popup-item spaced ' + (isCode ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.code.title',
-              defaultMessage: 'Insert code block',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.code.aria',
-              defaultMessage: 'Insert code block',
-            })}
-          >
-            <i className="format code" />
-          </button>
-          <button
-            type="button"
-            onClick={insertLink}
-            className={'popup-item spaced ' + (isLink ? 'active' : '')}
-            title={formatMessage({
-              id: 'lexical.plugin.format.link.title',
-              defaultMessage: 'Insert link',
-            })}
-            aria-label={formatMessage({
-              id: 'lexical.plugin.format.link.aria',
-              defaultMessage: 'Insert link',
-            })}
-          >
-            <i className="format link" />
-          </button>
+          {strapiFieldConfig.enabledNodeTypes.bold && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
+              }}
+              className={'popup-item spaced ' + (isBold ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.bold.title',
+                defaultMessage: 'Bold',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.bold.aria',
+                defaultMessage: 'Format text as bold',
+              })}
+            >
+              <i className="format bold" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.italic && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
+              }}
+              className={'popup-item spaced ' + (isItalic ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.italic.title',
+                defaultMessage: 'Italic',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.italic.aria',
+                defaultMessage: 'Format text as italics',
+              })}
+            >
+              <i className="format italic" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.underline && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
+              }}
+              className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.underline.title',
+                defaultMessage: 'Underline',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.underline.aria',
+                defaultMessage: 'Format text to underlined',
+              })}
+            >
+              <i className="format underline" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.strikethrough && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
+              }}
+              className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.strikethrough.title',
+                defaultMessage: 'Strikethrough',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.strikethrough.aria',
+                defaultMessage: 'Format text with a strikethrough',
+              })}
+            >
+              <i className="format strikethrough" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.subscript && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
+              }}
+              className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.subscript.title',
+                defaultMessage: 'Subscript',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.subscript.aria',
+                defaultMessage: 'Format Subscript',
+              })}
+            >
+              <i className="format subscript" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.superscript && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
+              }}
+              className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.superscript.title',
+                defaultMessage: 'Superscript',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.superscript.aria',
+                defaultMessage: 'Format Superscript',
+              })}
+            >
+              <i className="format superscript" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.uppercase && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'uppercase');
+              }}
+              className={'popup-item spaced ' + (isUppercase ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.uppercase.title',
+                defaultMessage: 'Uppercase',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.uppercase.aria',
+                defaultMessage: 'Format text to uppercase',
+              })}
+            >
+              <i className="format uppercase" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.lowercase && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'lowercase');
+              }}
+              className={'popup-item spaced ' + (isLowercase ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.lowercase.title',
+                defaultMessage: 'Lowercase',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.lowercase.aria',
+                defaultMessage: 'Format text to lowercase',
+              })}
+            >
+              <i className="format lowercase" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.capitalize && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'capitalize');
+              }}
+              className={'popup-item spaced ' + (isCapitalize ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.capitalize.title',
+                defaultMessage: 'Capitalize',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.capitalize.aria',
+                defaultMessage: 'Format text to capitalize',
+              })}
+            >
+              <i className="format capitalize" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.inlineCode && (
+            <button
+              type="button"
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
+              }}
+              className={'popup-item spaced ' + (isCode ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.code.title',
+                defaultMessage: 'Insert code block',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.code.aria',
+                defaultMessage: 'Insert code block',
+              })}
+            >
+              <i className="format code" />
+            </button>
+          )}
+          {strapiFieldConfig.enabledNodeTypes.link && (
+            <button
+              type="button"
+              onClick={insertLink}
+              className={'popup-item spaced ' + (isLink ? 'active' : '')}
+              title={formatMessage({
+                id: 'lexical.plugin.format.link.title',
+                defaultMessage: 'Insert link',
+              })}
+              aria-label={formatMessage({
+                id: 'lexical.plugin.format.link.aria',
+                defaultMessage: 'Insert link',
+              })}
+            >
+              <i className="format link" />
+            </button>
+          )}
         </>
       )}
     </div>

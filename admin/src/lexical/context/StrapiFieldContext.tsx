@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import { supportedNodeTypes } from '../../supportedNodeTypes';
 
 export type StrapiFieldConfig = {
   enabledNodeTypes: EnabledNodeTypes;
@@ -9,8 +10,7 @@ export type StrapiFieldConfig = {
 };
 
 export type EnabledNodeTypes = {
-  bold: boolean;
-  [key: string]: boolean;
+  [key in keyof typeof supportedNodeTypes]: boolean;
 };
 
 type EnabledActions = {
@@ -43,7 +43,28 @@ export const StrapiFieldConfigProvider = StrapiFieldConfigContext.Provider;
 
 export const defaultStrapiFieldConfig: StrapiFieldConfig = {
   enabledNodeTypes: {
-    bold: true,
+    bold: supportedNodeTypes.bold.enabledByDefault,
+    italic: supportedNodeTypes.italic.enabledByDefault,
+    underline: supportedNodeTypes.underline.enabledByDefault,
+    inlineCode: supportedNodeTypes.inlineCode.enabledByDefault,
+    emojiPicker: supportedNodeTypes.emojiPicker.enabledByDefault,
+    lowercase: supportedNodeTypes.lowercase.enabledByDefault,
+    uppercase: supportedNodeTypes.uppercase.enabledByDefault,
+    capitalize: supportedNodeTypes.capitalize.enabledByDefault,
+    strikethrough: supportedNodeTypes.strikethrough.enabledByDefault,
+    subscript: supportedNodeTypes.subscript.enabledByDefault,
+    superscript: supportedNodeTypes.superscript.enabledByDefault,
+    clearFormatting: supportedNodeTypes.clearFormatting.enabledByDefault,
+    link: supportedNodeTypes.link.enabledByDefault,
+    strapiImage: supportedNodeTypes.strapiImage.enabledByDefault,
+    horizontalRule: supportedNodeTypes.horizontalRule.enabledByDefault,
+    pageBreak: supportedNodeTypes.pageBreak.enabledByDefault,
+    image: supportedNodeTypes.image.enabledByDefault,
+    inlineImage: supportedNodeTypes.inlineImage.enabledByDefault,
+    table: supportedNodeTypes.table.enabledByDefault,
+    columns: supportedNodeTypes.columns.enabledByDefault,
+    equation: supportedNodeTypes.equation.enabledByDefault,
+    collapsible: supportedNodeTypes.collapsible.enabledByDefault,
   },
   enabledActions: {
     sessionHistory: true,
