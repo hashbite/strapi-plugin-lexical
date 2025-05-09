@@ -26,11 +26,13 @@ export function DropDownItem({
   className,
   onClick,
   title,
+  style,
 }: {
   children: React.ReactNode;
   className: string;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   title?: string;
+  style?: React.HTMLAttributes<HTMLButtonElement>['style'];
 }) {
   const ref = useRef<HTMLButtonElement>(null);
 
@@ -49,7 +51,14 @@ export function DropDownItem({
   }, [ref, registerItem]);
 
   return (
-    <button className={className} onClick={onClick} ref={ref} title={title} type="button">
+    <button
+      className={className}
+      onClick={onClick}
+      ref={ref}
+      title={title}
+      type="button"
+      style={style}
+    >
       {children}
     </button>
   );

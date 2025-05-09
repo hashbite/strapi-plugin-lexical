@@ -700,6 +700,7 @@ i.page-break,
   z-index: 100;
   display: block;
   position: fixed;
+  margin-top: 2px;
   box-shadow:
     0 12px 28px 0 rgba(0, 0, 0, 0.2),
     0 2px 4px 0 rgba(0, 0, 0, 0.1),
@@ -707,6 +708,8 @@ i.page-break,
   border-radius: 8px;
   min-height: 40px;
   background-color: #fff;
+  max-height: 61.8vh;
+  overflow: scroll;
 }
 
 .dropdown .item {
@@ -1437,7 +1440,7 @@ button.action-button:disabled {
   display: flex;
   background: #fff;
   border: 1px solid #dcdce4;
-  color: #999;
+  color: #666;
   padding: 4px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -1556,6 +1559,15 @@ button.toolbar-item.active i {
   width: 0px;
   margin: 0 4px;
   border-right: 1px solid #ddd;
+}
+
+.toolbar-group {
+  display: flex;
+  & .divider {
+    &:first-child {
+      display: none;
+    }
+  }
 }
 
 .sticky-note-container {

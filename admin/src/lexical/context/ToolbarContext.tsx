@@ -45,7 +45,7 @@ export const blockTypeToBlockName = {
 
 //disable eslint sorting rule for quick reference to toolbar state
 /* eslint-disable sort-keys-fix/sort-keys-fix */
-const INITIAL_TOOLBAR_STATE = {
+export const INITIAL_TOOLBAR_STATE = {
   bgColor: '#fff',
   blockType: 'paragraph' as keyof typeof blockTypeToBlockName,
   canRedo: false,
@@ -74,7 +74,7 @@ const INITIAL_TOOLBAR_STATE = {
   rootType: 'root' as keyof typeof rootTypeToRootName,
 };
 
-type ToolbarState = typeof INITIAL_TOOLBAR_STATE;
+export type ToolbarState = typeof INITIAL_TOOLBAR_STATE;
 
 // Utility type to get keys and infer value types
 type ToolbarStateKey = keyof ToolbarState;
@@ -87,8 +87,14 @@ type ContextShape = {
 
 const Context = createContext<ContextShape | undefined>(undefined);
 
-export const ToolbarContext = ({ children }: { children: ReactNode }): JSX.Element => {
-  const [toolbarState, setToolbarState] = useState(INITIAL_TOOLBAR_STATE);
+export const ToolbarContext = ({
+  children,
+  initialState,
+}: {
+  children: ReactNode;
+  initialState: ToolbarState;
+}): JSX.Element => {
+  const [toolbarState, setToolbarState] = useState(initialState);
   const selectionFontSize = toolbarState.fontSize;
 
   const updateToolbarState = useCallback(

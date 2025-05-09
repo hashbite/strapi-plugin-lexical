@@ -74,17 +74,26 @@ import ContentEditable from './ui/ContentEditable';
 import { useIntl } from 'react-intl';
 import StrapiImagePlugin from './plugins/StrapiImagePlugin';
 import './styles.css';
+import { SupportedNodeTypePlugins } from '../supportedNodeTypes';
+import { useStrapiFieldContext } from './context/StrapiFieldContext';
 
-interface LexicalEditorProps {
+export interface LexicalEditorProps {
   onChange: (newValue: SerializedEditorState<SerializedLexicalNode>) => void;
   ref: React.ForwardedRef<HTMLDivElement>;
   fieldName: string;
   expectedEditorState?: SerializedEditorState<SerializedLexicalNode>;
 }
 
+type RenderPluginProps = {
+  lexicalEditorProps: LexicalEditorProps;
+  onRef: (_floatingAnchorElem: HTMLDivElement) => void;
+  placeholder: string;
+};
+
 export default function Editor(props: LexicalEditorProps): JSX.Element {
   const { formatMessage } = useIntl();
   const { historyState } = useSharedHistoryContext();
+  const strapiFieldConfig = useStrapiFieldContext();
 
   const isCollab = false;
   const isAutocomplete = false;
@@ -93,7 +102,7 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
   const hasLinkAttributes = false;
   const isCharLimitUtf8 = false;
   const isRichText = true;
-  const showTreeView = false;
+  const showTreeView = strapiFieldConfig?.developers?.treeView;
   const showTableOfContents = false;
   const shouldUseLexicalContextMenu = false;
   const shouldPreserveNewLinesInMarkdown = false;
@@ -104,14 +113,6 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
   const selectionAlwaysOnDisplay = false;
 
   const isEditable = useLexicalEditable();
-  const placeholder = formatMessage(
-    {
-      id: 'lexical.editor.placeholder',
-      defaultMessage:
-        'Enter some {state, select, collab {collaborative rich} rich {rich} other {plain}} text...',
-    },
-    { state: isCollab ? 'collab' : isRichText ? 'rich' : 'plain' }
-  );
 
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
   const [isSmallWidthViewport, setIsSmallWidthViewport] = useState<boolean>(false);
@@ -171,7 +172,6 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
         {selectionAlwaysOnDisplay && <SelectionAlwaysOnDisplay />}
         <ClearEditorPlugin />
         <ComponentPickerPlugin />
-        <EmojiPickerPlugin />
         <AutoEmbedPlugin />
         <MentionsPlugin />
         <EmojisPlugin />
@@ -181,16 +181,7 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
         {isRichText ? (
           <>
             <HistoryPlugin externalHistoryState={historyState} />
-            <RichTextPlugin
-              contentEditable={
-                <div className="editor-scroller">
-                  <div className="editor" ref={onRef}>
-                    <ContentEditable placeholder={placeholder} ref={props.ref} />
-                  </div>
-                </div>
-              }
-              ErrorBoundary={LexicalErrorBoundary}
-            />
+            <SupportedNodeTypePlugins lexicalEditorProps={props} onRef={onRef} />
             <MarkdownShortcutPlugin />
             <CodeHighlightPlugin />
             <ListPlugin />
@@ -203,7 +194,7 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
             <TableCellResizer />
             <ImagesPlugin />
             <InlineImagePlugin />
-            <LinkPlugin hasLinkAttributes={hasLinkAttributes} />
+
             <PollPlugin />
             <TwitterPlugin />
             <YouTubePlugin />
