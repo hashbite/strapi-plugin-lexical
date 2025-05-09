@@ -10,7 +10,7 @@ import { SerializedEditorState, SerializedElementNode, SerializedLexicalNode } f
 
 import LexicalEditor from '../lexical/Editor';
 import { FlashMessageContext } from '../lexical/context/FlashMessageContext';
-import { ToolbarContext } from '../lexical/context/ToolbarContext';
+import { INITIAL_TOOLBAR_STATE, ToolbarContext } from '../lexical/context/ToolbarContext';
 import {
   StrapiFieldConfig,
   StrapiFieldConfigProvider,
@@ -251,7 +251,13 @@ const Input = React.forwardRef<HTMLDivElement, CustomFieldsComponentProps & Inpu
               <LexicalComposer initialConfig={initialConfig}>
                 <TableContext>
                   <StrapiFieldConfigProvider value={attribute.options}>
-                    <ToolbarContext>
+                    <ToolbarContext
+                      initialState={{
+                        ...INITIAL_TOOLBAR_STATE,
+                        fontSize: `${attribute.options.fontSize?.default || 15}px`,
+                        fontSizeInputValue: `${attribute.options.fontSize?.default || 15}`,
+                      }}
+                    >
                       <LexicalEditor
                         onChange={handleChangeCb}
                         ref={ref}
