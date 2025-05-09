@@ -35,6 +35,7 @@ import useModal from '../../hooks/useModal';
 import Button from '../../ui/Button';
 import { docFromHash, docToHash } from '../../utils/docSerialization';
 import { PLAYGROUND_TRANSFORMERS } from '../MarkdownTransformers';
+import { useStrapiFieldContext } from '../../context/StrapiFieldContext';
 
 async function sendEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());
@@ -160,131 +161,95 @@ export default function ActionsPlugin({
     });
   }, [editor, shouldPreserveNewLinesInMarkdown]);
 
+  const strapiFieldConfig = useStrapiFieldContext();
+
   return (
     <div className="actions">
-      <button
-        className="action-button import"
-        onClick={() => importFile(editor)}
-        title={formatMessage({
-          id: 'lexical.plugin.actions.import.title',
-          defaultMessage: 'Import',
-        })}
-        aria-label={formatMessage({
-          id: 'lexical.plugin.actions.import.aria',
-          defaultMessage: 'Import editor state from JSON',
-        })}
-      >
-        <i className="import" />
-      </button>
+      {strapiFieldConfig.enabledActions.import && (
+        <button
+          className="action-button import"
+          onClick={() => importFile(editor)}
+          title={formatMessage({
+            id: 'lexical.plugin.actions.import.title',
+            defaultMessage: 'Import',
+          })}
+          aria-label={formatMessage({
+            id: 'lexical.plugin.actions.import.aria',
+            defaultMessage: 'Import editor state from JSON',
+          })}
+        >
+          <i className="import" />
+        </button>
+      )}
 
-      <button
-        className="action-button export"
-        onClick={() =>
-          exportFile(editor, {
-            fileName: formatMessage(
-              { id: 'lexical.plugin.actions.export.filename', defaultMessage: 'Playground {date}' },
-              { date: new Date().toISOString() }
-            ),
-            source: 'Playground',
-          })
-        }
-        title={formatMessage({
-          id: 'lexical.plugin.actions.export.title',
-          defaultMessage: 'Export',
-        })}
-        aria-label={formatMessage({
-          id: 'lexical.plugin.actions.export.aria',
-          defaultMessage: 'Export editor state to JSON',
-        })}
-      >
-        <i className="export" />
-      </button>
-      <button
-        className="action-button share"
-        onClick={() =>
-          shareDoc(
-            serializedDocumentFromEditorState(editor.getEditorState(), {
+      {strapiFieldConfig.enabledActions.export && (
+        <button
+          className="action-button export"
+          onClick={() =>
+            exportFile(editor, {
+              fileName: formatMessage(
+                {
+                  id: 'lexical.plugin.actions.export.filename',
+                  defaultMessage: 'Playground {date}',
+                },
+                { date: new Date().toISOString() }
+              ),
               source: 'Playground',
             })
-          ).then(
-            () =>
-              showFlashMessage(
-                formatMessage({
-                  id: 'lexical.plugin.actions.share.success',
-                  defaultMessage: 'URL copied to clipboard',
-                })
-              ),
-            () =>
-              showFlashMessage(
-                formatMessage({
-                  id: 'lexical.plugin.actions.share.error',
-                  defaultMessage: 'URL could not be copied to clipboard',
-                })
-              )
-          )
-        }
-        title={formatMessage({ id: 'lexical.plugin.actions.share.title', defaultMessage: 'Share' })}
-        aria-label={formatMessage({
-          id: 'lexical.plugin.actions.share.aria',
-          defaultMessage: 'Share Playground link to current editor state',
-        })}
-      >
-        <i className="share" />
-      </button>
-      <button
-        className="action-button clear"
-        disabled={isEditorEmpty}
-        onClick={() => {
-          showModal(
-            formatMessage({
-              id: 'lexical.plugin.actions.clear.modal.title',
-              defaultMessage: 'Clear editor',
-            }),
-            (onClose) => <ShowClearDialog editor={editor} onClose={onClose} />
-          );
-        }}
-        title={formatMessage({ id: 'lexical.plugin.actions.clear.title', defaultMessage: 'Clear' })}
-        aria-label={formatMessage({
-          id: 'lexical.plugin.actions.clear.aria',
-          defaultMessage: 'Clear editor contents',
-        })}
-      >
-        <i className="clear" />
-      </button>
-      <button
-        className={`action-button ${!isEditable ? 'unlock' : 'lock'}`}
-        onClick={() => {
-          // Send latest editor state to commenting validation server
-          if (isEditable) {
-            sendEditorState(editor);
           }
-          editor.setEditable(!editor.isEditable());
-        }}
-        title={formatMessage({
-          id: 'lexical.plugin.actions.readonly.title',
-          defaultMessage: 'Read-Only Mode',
-        })}
-        aria-label={formatMessage(
-          { id: 'lexical.plugin.actions.readonly.aria', defaultMessage: '{state} read-only mode' },
-          { state: !isEditable ? 'Unlock' : 'Lock' }
-        )}
-      >
-        <i className={!isEditable ? 'unlock' : 'lock'} />
-      </button>
-      <button
-        className="action-button"
-        onClick={handleMarkdownToggle}
-        title={formatMessage({
-          id: 'lexical.plugin.actions.markdown.title',
-          defaultMessage: 'Convert From Markdown',
-        })}
-        aria-label={formatMessage({
-          id: 'lexical.plugin.actions.markdown.aria',
-          defaultMessage: 'Convert from markdown',
-        })}
-      >
-        <i className="markdown" />
-      </button>
+          title={formatMessage({
+            id: 'lexical.plugin.actions.export.title',
+            defaultMessage: 'Export',
+          })}
+          aria-label={formatMessage({
+            id: 'lexical.plugin.actions.export.aria',
+            defaultMessage: 'Export editor state to JSON',
+          })}
+        >
+          <i className="export" />
+        </button>
+      )}
+      {strapiFieldConfig.enabledActions.clear && (
+        <button
+          className="action-button clear"
+          disabled={isEditorEmpty}
+          onClick={() => {
+            showModal(
+              formatMessage({
+                id: 'lexical.plugin.actions.clear.modal.title',
+                defaultMessage: 'Clear editor',
+              }),
+              (onClose) => <ShowClearDialog editor={editor} onClose={onClose} />
+            );
+          }}
+          title={formatMessage({
+            id: 'lexical.plugin.actions.clear.title',
+            defaultMessage: 'Clear',
+          })}
+          aria-label={formatMessage({
+            id: 'lexical.plugin.actions.clear.aria',
+            defaultMessage: 'Clear editor contents',
+          })}
+        >
+          <i className="clear" />
+        </button>
+      )}
+      {strapiFieldConfig.enabledActions.exportAsMarkdown && (
+        <button
+          className="action-button"
+          onClick={handleMarkdownToggle}
+          title={formatMessage({
+            id: 'lexical.plugin.actions.markdown.title',
+            defaultMessage: 'Convert From Markdown',
+          })}
+          aria-label={formatMessage({
+            id: 'lexical.plugin.actions.markdown.aria',
+            defaultMessage: 'Convert from markdown',
+          })}
+        >
+          <i className="markdown" />
+        </button>
+      )}
       {modal}
     </div>
   );
