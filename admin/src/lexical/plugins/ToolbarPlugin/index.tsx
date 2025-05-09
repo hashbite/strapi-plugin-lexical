@@ -514,7 +514,7 @@ function ToolbarItem(props: { id: string }): React.ReactNode {
     }
   }
 
-  if (props.id === 'actions.history.undo') {
+  if (props.id === 'actions.history.undo' && strapiFieldConfig.enabledActions.sessionHistory) {
     return (
       <HistoryUndo
         toolbarState={toolbarState}
@@ -523,7 +523,7 @@ function ToolbarItem(props: { id: string }): React.ReactNode {
       />
     );
   }
-  if (props.id === 'actions.history.redo') {
+  if (props.id === 'actions.history.redo' && strapiFieldConfig.enabledActions.sessionHistory) {
     return (
       <HistoryRedo
         toolbarState={toolbarState}
