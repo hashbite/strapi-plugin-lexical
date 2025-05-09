@@ -260,29 +260,6 @@ const collapsible: SupportedNodeType = {
   renderToolbarItem: Collapsible,
 };
 
-export {
-  bold,
-  italic,
-  underline,
-  inlineCode,
-  emojiPicker,
-  lowercase,
-  uppercase,
-  capitalize,
-  strikethrough,
-  subscript,
-  superscript,
-  clearFormatting,
-  link,
-  strapiImage,
-  horizontalRule,
-  pageBreak,
-  image,
-  inlineImage,
-  table,
-  columns,
-};
-
 export const supportedNodeTypes = {
   bold,
   italic,
