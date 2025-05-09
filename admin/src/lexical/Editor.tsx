@@ -113,14 +113,6 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
   const selectionAlwaysOnDisplay = false;
 
   const isEditable = useLexicalEditable();
-  const placeholder = formatMessage(
-    {
-      id: 'lexical.editor.placeholder',
-      defaultMessage:
-        'Enter some {state, select, collab {collaborative rich} rich {rich} other {plain}} text...',
-    },
-    { state: isCollab ? 'collab' : isRichText ? 'rich' : 'plain' }
-  );
 
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
   const [isSmallWidthViewport, setIsSmallWidthViewport] = useState<boolean>(false);
@@ -189,11 +181,7 @@ export default function Editor(props: LexicalEditorProps): JSX.Element {
         {isRichText ? (
           <>
             <HistoryPlugin externalHistoryState={historyState} />
-            <SupportedNodeTypePlugins
-              lexicalEditorProps={props}
-              onRef={onRef}
-              placeholder={placeholder}
-            />
+            <SupportedNodeTypePlugins lexicalEditorProps={props} onRef={onRef} />
             <MarkdownShortcutPlugin />
             <CodeHighlightPlugin />
             <ListPlugin />

@@ -46,21 +46,12 @@ export function FontDropDown({
     [editor, style]
   );
 
-  const buttonAriaLabel = formatMessage(
-    {
-      id: `lexical.plugin.toolbar.font.button.title`,
-      defaultMessage: 'Formatting options for font {property}',
-    },
-    { property: style === 'font-family' ? 'family' : 'size' }
-  );
-
   return (
     <DropDown
       disabled={disabled}
       buttonClassName={'toolbar-item ' + style}
       buttonLabel={value}
       buttonIconClassName={style === 'font-family' ? 'icon block-type font-family' : ''}
-      buttonAriaLabel={buttonAriaLabel}
     >
       {options.map((option) => (
         <DropDownItem

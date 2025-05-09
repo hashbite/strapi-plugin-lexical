@@ -39,7 +39,6 @@ type LexicalPlugin<T = any> = (props: T) => JSX.Element | null;
 type RenderPluginProps = {
   lexicalEditorProps: LexicalEditorProps;
   onRef: (floatingAnchorElem: HTMLDivElement) => void;
-  placeholder: string;
 };
 
 export type ToolbarItemProps = {
@@ -57,13 +56,13 @@ type SupportedNodeType = {
   renderToolbarItem?: React.FunctionComponent<ToolbarItemProps>;
 };
 
-function RichTextLexicalPlugin({ lexicalEditorProps, onRef, placeholder }: RenderPluginProps) {
+function RichTextLexicalPlugin({ lexicalEditorProps, onRef }: RenderPluginProps) {
   return (
     <RichTextPlugin
       contentEditable={
         <div className="editor-scroller">
           <div className="editor" ref={onRef}>
-            <ContentEditable placeholder={placeholder} ref={lexicalEditorProps.ref} />
+            <ContentEditable ref={lexicalEditorProps.ref} />
           </div>
         </div>
       }
