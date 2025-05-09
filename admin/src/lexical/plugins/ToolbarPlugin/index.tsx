@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from 'react';
-import { Children } from 'react';
 import { useIntl } from 'react-intl';
 
 import {
@@ -16,10 +15,9 @@ import {
   CODE_LANGUAGE_MAP,
   getLanguageFriendlyName,
 } from '@lexical/code';
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { $isLinkNode } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
-import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import { $isHeadingNode } from '@lexical/rich-text';
 import {
   $getSelectionStyleValueForProperty,
@@ -35,7 +33,6 @@ import {
 } from '@lexical/utils';
 import {
   $getNodeByKey,
-  $getRoot,
   $getSelection,
   $isElementNode,
   $isRangeSelection,
@@ -45,32 +42,24 @@ import {
   COMMAND_PRIORITY_CRITICAL,
   ElementFormatType,
   FORMAT_ELEMENT_COMMAND,
-  FORMAT_TEXT_COMMAND,
   INDENT_CONTENT_COMMAND,
   LexicalEditor,
   NodeKey,
   OUTDENT_CONTENT_COMMAND,
-  REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND,
 } from 'lexical';
 import * as React from 'react';
 import { Dispatch, useCallback, useEffect, useState } from 'react';
-import { IS_APPLE } from '../../utils/environment';
 
 import { useStrapiApp } from '@strapi/strapi/admin';
 import { blockTypeToBlockName, useToolbarState } from '../../context/ToolbarContext';
 import useModal from '../../hooks/useModal';
-import { $createStickyNode } from '../../nodes/StickyNode';
 import DropDown, { DropDownItem } from '../../ui/DropDown';
 import { getSelectedNode } from '../../utils/getSelectedNode';
-import { sanitizeUrl } from '../../utils/url';
 import { EmbedConfigs } from '../AutoEmbedPlugin';
 
-import { INSERT_IMAGE_COMMAND, InsertImageDialog, InsertImagePayload } from '../ImagesPlugin';
-import { InsertInlineImageDialog } from '../InlineImagePlugin';
+import { INSERT_IMAGE_COMMAND, InsertImagePayload } from '../ImagesPlugin';
 
-import { InsertPollDialog } from '../PollPlugin';
 import { SHORTCUTS } from '../ShortcutsPlugin/shortcuts';
 import { InsertStrapiImageDialog } from '../StrapiImagePlugin';
 
@@ -90,7 +79,7 @@ import {
 } from '../../context/ToolbarItemRenderDependenciesContext';
 import { EnabledNodeTypes, useStrapiFieldContext } from '../../context/StrapiFieldContext';
 import { supportedNodeTypes } from '../../../supportedNodeTypes';
-import { dropDownActiveClass, clearFormatting } from './codeLessUtils';
+import { dropDownActiveClass } from './codeLessUtils';
 import FontSize from './toolbarItems/fontSize';
 import { FontDropDown } from './toolbarItems/font';
 
@@ -573,32 +562,11 @@ function ToolbarItem(props: { id: string }): React.ReactNode {
 }
 
 function ToolbarGroup(props: React.PropsWithChildren<{}>) {
-  const groupElements = Children.map(props.children, (element) => {
-    if (!React.isValidElement(element)) {
-      // Ignore non-elements. This allows people to more easily inline
-      // conditionals in their route config.
-      return;
-    }
-    if (element.type !== ToolbarItem) {
-      // Ignore unknown elements
-      // TODO: fail with good error message?
-      return;
-    }
-
-    return element;
-  });
-
-  if (!groupElements || !Children.count(groupElements)) {
-    // Return an empty group if all elements are disabled
-    // @todo this is not working! toolbar still renders as "just a divider"
-    return;
-  }
-
   return (
-    <>
-      {...groupElements}
+    <div className="toolbar-group">
+      {props.children}
       <Divider />
-    </>
+    </div>
   );
 }
 
@@ -609,30 +577,7 @@ function ToolbarDropDown(
     buttonIconClassName: string;
   }>
 ) {
-  const { toolbarState } = useToolbarState();
   const renderDependencies = useToolbarItemRenderDependencies();
-  const strapiFieldConfig = useStrapiFieldContext();
-
-  const groupElements = Children.map(props.children, (element) => {
-    if (!React.isValidElement(element)) {
-      // Ignore non-elements. This allows people to more easily inline
-      // conditionals in their route config.
-      return;
-    }
-    if (element.type !== ToolbarItem) {
-      // Ignore unknown elements
-      // TODO: fail with good error message?
-      return;
-    }
-
-    return element;
-  });
-
-  if (!groupElements || !Children.count(groupElements)) {
-    // Return an empty group if all elements are disabled
-    // @todo this is not working! toolbar still renders as "just a divider"
-    return;
-  }
 
   return (
     <>
@@ -643,7 +588,7 @@ function ToolbarDropDown(
         buttonAriaLabel={props.buttonAriaLabel}
         buttonIconClassName={props.buttonIconClassName}
       >
-        {...groupElements}
+        {props.children}
       </DropDown>
       <Divider />
     </>
@@ -911,7 +856,6 @@ export default function ToolbarPlugin({
           <ToolbarItem id="nodeTypes.italic" />
           <ToolbarItem id="nodeTypes.underline" />
           <ToolbarItem id="nodeTypes.inlineCode" />
-          {/* TODO: how to support a nested "additional options" */}
         </ToolbarGroup>
         <ToolbarGroup>
           <ToolbarItem id="fontFamily.enabled" />
@@ -919,43 +863,6 @@ export default function ToolbarPlugin({
         <ToolbarGroup>
           <ToolbarItem id="fontSize.enabled" />
         </ToolbarGroup>
-        {/* {strapiFieldConfig?.fontFamily?.enabled && (
-          <ToolbarGroup>
-            <FontDropDown
-              disabled={!isEditable}
-              style={'font-family'}
-              value={toolbarState.fontFamily}
-              editor={activeEditor}
-              options={strapiFieldConfig.fontFamily.families.split(';')}
-            />
-          </ToolbarGroup>
-        )}
-        {strapiFieldConfig?.fontSize?.enabled && (
-          <ToolbarGroup>
-            <FontDropDown
-              disabled={!isEditable}
-              style={'font-size'}
-              value={toolbarState.fontSize}
-              editor={activeEditor}
-              options={Array.from(
-                {
-                  length:
-                    strapiFieldConfig.fontSize.maximum - strapiFieldConfig.fontSize.minimum + 1,
-                },
-                (_, i) => strapiFieldConfig.fontSize.minimum + i
-              ).map(size => `${size}px`)}
-            />
-          </ToolbarGroup>
-        )}
-        {strapiFieldConfig?.fontSize?.enabled && (
-          <ToolbarGroup>
-            <FontSize
-              selectionFontSize={toolbarState.fontSize.slice(0, -2)}
-              editor={activeEditor}
-              disabled={!isEditable}
-            />
-          </ToolbarGroup>
-        )} */}
         <ToolbarGroup>
           <ToolbarItem id="nodeType.link"></ToolbarItem>
           <ToolbarItem id="nodeType.strapiImage"></ToolbarItem>

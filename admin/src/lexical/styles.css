@@ -1561,6 +1561,15 @@ button.toolbar-item.active i {
   border-right: 1px solid #ddd;
 }
 
+.toolbar-group {
+  display: flex;
+  & .divider {
+    &:first-child {
+      display: none;
+    }
+  }
+}
+
 .sticky-note-container {
   position: absolute;
   z-index: 9;
