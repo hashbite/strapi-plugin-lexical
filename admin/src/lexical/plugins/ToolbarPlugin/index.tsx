@@ -91,6 +91,8 @@ import {
 import { EnabledNodeTypes, useStrapiFieldContext } from '../../context/StrapiFieldContext';
 import { supportedNodeTypes } from '../../../supportedNodeTypes';
 import { dropDownActiveClass, clearFormatting } from './codeLessUtils';
+import FontSize from './toolbarItems/fontSize';
+import { FontDropDown } from './toolbarItems/font';
 
 const rootTypeToRootName = {
   root: 'Root',
@@ -108,29 +110,6 @@ function getCodeLanguageOptions(): [string, string][] {
 }
 
 const CODE_LANGUAGE_OPTIONS = getCodeLanguageOptions();
-
-const FONT_FAMILY_OPTIONS: [string, string][] = [
-  ['Arial', 'Arial'],
-  ['Courier New', 'Courier New'],
-  ['Georgia', 'Georgia'],
-  ['Times New Roman', 'Times New Roman'],
-  ['Trebuchet MS', 'Trebuchet MS'],
-  ['Verdana', 'Verdana'],
-];
-
-const FONT_SIZE_OPTIONS: [string, string][] = [
-  ['10px', '10px'],
-  ['11px', '11px'],
-  ['12px', '12px'],
-  ['13px', '13px'],
-  ['14px', '14px'],
-  ['15px', '15px'],
-  ['16px', '16px'],
-  ['17px', '17px'],
-  ['18px', '18px'],
-  ['19px', '19px'],
-  ['20px', '20px'],
-];
 
 const ELEMENT_FORMAT_OPTIONS: {
   [key in Exclude<ElementFormatType, ''>]: {
@@ -340,65 +319,6 @@ function BlockFormatDropDown({
 
 function Divider(): JSX.Element {
   return <div className="divider" />;
-}
-
-// @todo: extract to external file
-function FontDropDown({
-  editor,
-  value,
-  style,
-  disabled = false,
-}: {
-  editor: LexicalEditor;
-  value: string;
-  style: string;
-  disabled?: boolean;
-}): JSX.Element {
-  const { formatMessage } = useIntl();
-
-  const handleClick = useCallback(
-    (option: string) => {
-      editor.update(() => {
-        const selection = $getSelection();
-        if (selection !== null) {
-          $patchStyleText(selection, {
-            [style]: option,
-          });
-        }
-      });
-    },
-    [editor, style]
-  );
-
-  const buttonAriaLabel = formatMessage(
-    {
-      id: `lexical.plugin.toolbar.font.button.title`,
-      defaultMessage: 'Formatting options for font {property}',
-    },
-    { property: style === 'font-family' ? 'family' : 'style' }
-  );
-
-  return (
-    <DropDown
-      disabled={disabled}
-      buttonClassName={'toolbar-item ' + style}
-      buttonLabel={value}
-      buttonIconClassName={style === 'font-family' ? 'icon block-type font-family' : ''}
-      buttonAriaLabel={buttonAriaLabel}
-    >
-      {(style === 'font-family' ? FONT_FAMILY_OPTIONS : FONT_SIZE_OPTIONS).map(([option, text]) => (
-        <DropDownItem
-          className={`item ${dropDownActiveClass(value === option)} ${
-            style === 'font-size' ? 'fontsize-item' : ''
-          }`}
-          onClick={() => handleClick(option)}
-          key={option}
-        >
-          <span className="text">{text}</span>
-        </DropDownItem>
-      ))}
-    </DropDown>
-  );
 }
 
 // @todo: extract to external file
@@ -613,8 +533,41 @@ function ToolbarItem(props: { id: string }): React.ReactNode {
     );
   }
 
-  // @todo what about the floating actions?
-  // @todo the floating toolbar also needs to adjust itself!
+  if (props.id === 'fontFamily.enabled' && strapiFieldConfig.fontFamily.enabled) {
+    return (
+      <FontDropDown
+        editor={renderDependencies.activeEditor}
+        disabled={!renderDependencies.isEditable}
+        style={'font-family'}
+        value={toolbarState.fontFamily}
+        options={strapiFieldConfig.fontFamily.families.split(';')}
+      />
+    );
+  }
+
+  if (props.id === 'fontSize.enabled' && strapiFieldConfig.fontSize.enabled) {
+    return (
+      <>
+        <FontDropDown
+          editor={renderDependencies.activeEditor}
+          disabled={!renderDependencies.isEditable}
+          style={'font-size'}
+          value={toolbarState.fontSize}
+          options={Array.from(
+            {
+              length: strapiFieldConfig.fontSize.maximum - strapiFieldConfig.fontSize.minimum + 1,
+            },
+            (_, i) => strapiFieldConfig.fontSize.minimum + i
+          ).map((size) => `${size}px`)}
+        />
+        <FontSize
+          selectionFontSize={toolbarState.fontSize.slice(0, -2)}
+          editor={renderDependencies.activeEditor}
+          disabled={!renderDependencies.isEditable}
+        />
+      </>
+    );
+  }
 
   return undefined;
 }
@@ -709,6 +662,7 @@ export default function ToolbarPlugin({
   setIsLinkEditMode: Dispatch<boolean>;
 }): JSX.Element {
   const { formatMessage } = useIntl();
+  const strapiFieldConfig = useStrapiFieldContext();
 
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(null);
   const [modal, showModal] = useModal();
@@ -960,6 +914,49 @@ export default function ToolbarPlugin({
           {/* TODO: how to support a nested "additional options" */}
         </ToolbarGroup>
         <ToolbarGroup>
+          <ToolbarItem id="fontFamily.enabled" />
+        </ToolbarGroup>
+        <ToolbarGroup>
+          <ToolbarItem id="fontSize.enabled" />
+        </ToolbarGroup>
+        {/* {strapiFieldConfig?.fontFamily?.enabled && (
+          <ToolbarGroup>
+            <FontDropDown
+              disabled={!isEditable}
+              style={'font-family'}
+              value={toolbarState.fontFamily}
+              editor={activeEditor}
+              options={strapiFieldConfig.fontFamily.families.split(';')}
+            />
+          </ToolbarGroup>
+        )}
+        {strapiFieldConfig?.fontSize?.enabled && (
+          <ToolbarGroup>
+            <FontDropDown
+              disabled={!isEditable}
+              style={'font-size'}
+              value={toolbarState.fontSize}
+              editor={activeEditor}
+              options={Array.from(
+                {
+                  length:
+                    strapiFieldConfig.fontSize.maximum - strapiFieldConfig.fontSize.minimum + 1,
+                },
+                (_, i) => strapiFieldConfig.fontSize.minimum + i
+              ).map(size => `${size}px`)}
+            />
+          </ToolbarGroup>
+        )}
+        {strapiFieldConfig?.fontSize?.enabled && (
+          <ToolbarGroup>
+            <FontSize
+              selectionFontSize={toolbarState.fontSize.slice(0, -2)}
+              editor={activeEditor}
+              disabled={!isEditable}
+            />
+          </ToolbarGroup>
+        )} */}
+        <ToolbarGroup>
           <ToolbarItem id="nodeType.link"></ToolbarItem>
           <ToolbarItem id="nodeType.strapiImage"></ToolbarItem>
           {isStrapiImageDialogOpen && (
@@ -1060,22 +1057,6 @@ export default function ToolbarPlugin({
           </DropDown>
         ) : (
           <>
-            {/* <FontDropDown
-            disabled={!isEditable}
-            style={'font-family'}
-            value={toolbarState.fontFamily}
-            editor={activeEditor}
-          />
-          <Divider />
-          <FontSize
-            selectionFontSize={toolbarState.fontSize.slice(0, -2)}
-            editor={activeEditor}
-            disabled={!isEditable}
-          />
-          <Divider /> */}
-
-            <Divider />
-
             {/* @todo */}
             <ElementFormatDropdown
               disabled={!isEditable}

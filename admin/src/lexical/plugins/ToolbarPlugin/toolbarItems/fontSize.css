@@ -11,11 +11,12 @@
   font-size: 14px;
   color: #777;
   border-radius: 5px;
-  border-color: grey;
-  height: 15px;
+  border: 1px solid #ddd;
   padding: 2px 4px;
   text-align: center;
-  width: 20px;
+  width: 30px;
+  height: auto;
+  margin: 0 3px;
   align-self: center;
 }
 
@@ -35,13 +36,13 @@ input[type='number'] {
 }
 
 .add-icon {
-  background-image: url(../../images/icons/add-sign.svg);
+  background-image: url(../../../images/icons/add-sign.svg);
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .minus-icon {
-  background-image: url(../../images/icons/minus-sign.svg);
+  background-image: url(../../../images/icons/minus-sign.svg);
   background-repeat: no-repeat;
   background-position: center;
 }

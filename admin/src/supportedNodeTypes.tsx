@@ -50,6 +50,7 @@ export type ToolbarItemProps = {
 
 type SupportedNodeType = {
   id: string;
+  enabledByDefault: boolean;
   defaultLabel: string;
   defaultDescription: string;
   lexicalPlugin?: LexicalPlugin<RenderPluginProps>;
@@ -73,6 +74,7 @@ function RichTextLexicalPlugin({ lexicalEditorProps, onRef, placeholder }: Rende
 
 const bold: SupportedNodeType = {
   id: 'bold',
+  enabledByDefault: true,
   defaultLabel: 'Bold',
   defaultDescription: 'Enable bold text',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -81,6 +83,7 @@ const bold: SupportedNodeType = {
 
 const italic: SupportedNodeType = {
   id: 'italic',
+  enabledByDefault: true,
   defaultLabel: 'Italic',
   defaultDescription: 'Enable italic text',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -89,6 +92,7 @@ const italic: SupportedNodeType = {
 
 const underline: SupportedNodeType = {
   id: 'underline',
+  enabledByDefault: true,
   defaultLabel: 'Underline',
   defaultDescription: 'Enable underlining of text',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -97,6 +101,7 @@ const underline: SupportedNodeType = {
 
 const emojiPicker: SupportedNodeType = {
   id: 'emojiPicker',
+  enabledByDefault: false,
   defaultLabel: 'Emoji Picker',
   defaultDescription: 'Enable emoji picker',
   lexicalPlugin: () => <EmojiPickerPlugin />,
@@ -104,6 +109,7 @@ const emojiPicker: SupportedNodeType = {
 
 const inlineCode: SupportedNodeType = {
   id: 'inlineCode',
+  enabledByDefault: false,
   defaultLabel: 'Inline Code',
   defaultDescription: 'Enable inline monospace-code',
   // TODO: really?
@@ -113,6 +119,7 @@ const inlineCode: SupportedNodeType = {
 
 const link: SupportedNodeType = {
   id: 'link',
+  enabledByDefault: true,
   defaultLabel: 'Links',
   defaultDescription: 'Enable links to Strapi-internal and external targets',
   lexicalPlugin: () => <LinkPlugin />,
@@ -121,6 +128,7 @@ const link: SupportedNodeType = {
 
 const strapiImage: SupportedNodeType = {
   id: 'strapiImage',
+  enabledByDefault: true,
   defaultLabel: 'Strapi Images',
   defaultDescription: "Enable embedding images from Strapi's media gallery",
   lexicalPlugin: StrapiImagePlugin,
@@ -129,6 +137,7 @@ const strapiImage: SupportedNodeType = {
 
 const lowercase: SupportedNodeType = {
   id: 'lowercase',
+  enabledByDefault: false,
   defaultLabel: 'Lowercase',
   defaultDescription: 'Enable inline lowercase',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -137,6 +146,7 @@ const lowercase: SupportedNodeType = {
 
 const uppercase: SupportedNodeType = {
   id: 'uppercase',
+  enabledByDefault: false,
   defaultLabel: 'Uppercase',
   defaultDescription: 'Enable inline uppercase',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -145,6 +155,7 @@ const uppercase: SupportedNodeType = {
 
 const capitalize: SupportedNodeType = {
   id: 'capitalize',
+  enabledByDefault: false,
   defaultLabel: 'Capitalize',
   defaultDescription: 'Enable inline capitalize',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -153,6 +164,7 @@ const capitalize: SupportedNodeType = {
 
 const strikethrough: SupportedNodeType = {
   id: 'strikethrough',
+  enabledByDefault: false,
   defaultLabel: 'Strikethrough',
   defaultDescription: 'Enable inline strikethrough',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -161,6 +173,7 @@ const strikethrough: SupportedNodeType = {
 
 const subscript: SupportedNodeType = {
   id: 'subscript',
+  enabledByDefault: false,
   defaultLabel: 'Subscript',
   defaultDescription: 'Enable inline subscript',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -169,6 +182,7 @@ const subscript: SupportedNodeType = {
 
 const superscript: SupportedNodeType = {
   id: 'superscript',
+  enabledByDefault: false,
   defaultLabel: 'Superscript',
   defaultDescription: 'Enable inline superscript',
   lexicalPlugin: RichTextLexicalPlugin,
@@ -177,6 +191,7 @@ const superscript: SupportedNodeType = {
 
 const clearFormatting: SupportedNodeType = {
   id: 'clearFormatting',
+  enabledByDefault: true,
   defaultLabel: 'Clear Formatting',
   defaultDescription: 'Enable button to clear formatting',
   renderToolbarItem: ClearFormatting,
@@ -184,6 +199,7 @@ const clearFormatting: SupportedNodeType = {
 
 const horizontalRule: SupportedNodeType = {
   id: 'horizontalRule',
+  enabledByDefault: false,
   defaultLabel: 'Horizontal Rule',
   defaultDescription: 'Enable horizontal rule',
   renderToolbarItem: HorizontalRule,
@@ -191,6 +207,7 @@ const horizontalRule: SupportedNodeType = {
 
 const pageBreak: SupportedNodeType = {
   id: 'pageBreak',
+  enabledByDefault: false,
   defaultLabel: 'Page Break',
   defaultDescription: 'Enable page break',
   renderToolbarItem: PageBreak,
@@ -198,6 +215,7 @@ const pageBreak: SupportedNodeType = {
 
 const image: SupportedNodeType = {
   id: 'image',
+  enabledByDefault: false,
   defaultLabel: 'Image',
   defaultDescription: 'Enable image',
   renderToolbarItem: Image,
@@ -205,6 +223,7 @@ const image: SupportedNodeType = {
 
 const inlineImage: SupportedNodeType = {
   id: 'inlineImage',
+  enabledByDefault: false,
   defaultLabel: 'Inline Image',
   defaultDescription: 'Enable inline image',
   renderToolbarItem: InlineImage,
@@ -212,6 +231,7 @@ const inlineImage: SupportedNodeType = {
 
 const table: SupportedNodeType = {
   id: 'table',
+  enabledByDefault: false,
   defaultLabel: 'Table',
   defaultDescription: 'Enable table',
   renderToolbarItem: Table,
@@ -219,6 +239,7 @@ const table: SupportedNodeType = {
 
 const columns: SupportedNodeType = {
   id: 'columns',
+  enabledByDefault: false,
   defaultLabel: 'Columns',
   defaultDescription: 'Enable columns',
   renderToolbarItem: Columns,
@@ -226,6 +247,7 @@ const columns: SupportedNodeType = {
 
 const equation: SupportedNodeType = {
   id: 'equation',
+  enabledByDefault: false,
   defaultLabel: 'Equation',
   defaultDescription: 'Enable equation',
   renderToolbarItem: Equation,
@@ -233,6 +255,7 @@ const equation: SupportedNodeType = {
 
 const collapsible: SupportedNodeType = {
   id: 'collapsible',
+  enabledByDefault: false,
   defaultLabel: 'Collapsible',
   defaultDescription: 'Enable collapsible',
   renderToolbarItem: Collapsible,
